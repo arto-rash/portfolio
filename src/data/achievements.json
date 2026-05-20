@@ -1,31 +1,31 @@
 [
   {
-    "title": "Speaker — Frontend Baku Meetup",
-    "organization": "Frontend Baku",
-    "date": "2025-09",
-    "description": "Talk on scroll-driven animations: building cinematic flows with CSS scroll-timeline and the JS fallbacks worth shipping today.",
-    "image": "/achievements/frontend-baku.jpg",
-    "link": "https://example.com/talk"
+    "title": "Lead Instructor — Robotics, Programming & Electronics",
+    "organization": "education center",
+    "date": "2022-09",
+    "description": "Two-plus years teaching teenagers Arduino, Raspberry Pi, Python, and circuit-level fundamentals. Built the lab curriculum from scratch — sensors, motors, and the kind of small autonomous robots that need to fail loudly before they work quietly.",
+    "image": "/achievements/teaching.jpg",
+    "link": ""
   },
   {
-    "title": "Featured — Awwwards Site of the Day",
-    "organization": "Awwwards",
-    "date": "2024-11",
-    "description": "Mapsmith picked up SOTD for the editor flow. The judges flagged the easing curves; the easing curves nearly killed me.",
-    "image": "/achievements/awwwards.jpg",
-    "link": "https://www.awwwards.com/"
+    "title": "Embedded side-project — home telemetry",
+    "organization": "personal",
+    "date": "2024-04",
+    "description": "ESP32 + sensors + a small backend that streams readings over MQTT into Postgres, surfaced through a tiny dashboard. Solid reminder that hardware always finds the bug your unit tests didn't.",
+    "image": "/achievements/embedded.jpg",
+    "link": ""
   },
   {
-    "title": "Open-source maintainer",
-    "organization": "do-not-disturb.css",
+    "title": "Open-source contributor",
+    "organization": "various",
     "date": "2024-03",
-    "description": "Crossed 1.2k stars on GitHub. Replied to most of the issues, ignored the rude ones.",
+    "description": "Patches and small libraries across web tooling and embedded helpers. Reply to most issues. Ignore the rude ones.",
     "image": "/achievements/oss.jpg",
     "link": "https://github.com/"
   },
   {
     "title": "B.S. Computer Science",
-    "organization": "ADA University",
+    "organization": "university",
     "date": "2022-06",
     "description": "Graduated with a thesis on lazy rendering strategies in feed-heavy interfaces. Spent more time in the dev console than in the library.",
     "image": "/achievements/degree.jpg",

@@ -11,7 +11,7 @@
     "url": "https://example.com/tideline",
     "source": "https://github.com/example/tideline",
     "image": "",
-    "accent": "#d97757",
+    "accent": "#1d4fff",
     "featured": true
   },
   {
@@ -26,7 +26,7 @@
     "url": "https://example.com/mapsmith",
     "source": "",
     "image": "",
-    "accent": "#e89559",
+    "accent": "#ed7c2d",
     "featured": true
   },
   {
@@ -41,7 +41,7 @@
     "url": "",
     "source": "",
     "image": "",
-    "accent": "#c97a4f",
+    "accent": "#c63d63",
     "featured": true
   },
   {
@@ -56,7 +56,7 @@
     "url": "",
     "source": "https://github.com/example/dnd-css",
     "image": "",
-    "accent": "#8b9c8e",
+    "accent": "#0d9488",
     "featured": false
   },
   {
@@ -71,7 +71,7 @@
     "url": "",
     "source": "https://github.com/example/tinyfmt",
     "image": "",
-    "accent": "#6b665c",
+    "accent": "#6b6a6a",
     "featured": false
   }
 ]
