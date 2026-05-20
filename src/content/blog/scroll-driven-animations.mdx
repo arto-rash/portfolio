@@ -1,0 +1,35 @@
+---
+title: "Scroll-driven animations are weird, in the good way"
+date: 2026-04-18
+excerpt: "Native scroll-timeline is finally enough for real work — but the JS fallback is still where the personality lives."
+tags: ["css", "animation", "frontend"]
+draft: false
+---
+
+I keep telling people that **scroll-driven animations** are a different mental model from regular ones — and then watching them write `@keyframes` with `animation-timeline: scroll()` and trip over the same things I did. So, a short list.
+
+## What I tell myself before reaching for JS
+
+- The CSS version is plenty for *progress-driven* effects: a sidebar that grows as you scroll, a parallax band, a colour shift.
+- The CSS version is **not** great when the animation needs to *react* — e.g. snap when you cross a threshold, pause and play, or coordinate with audio.
+- The CSS version costs nothing extra. The JS version costs a `requestAnimationFrame` loop and a `getBoundingClientRect` per frame. That's still cheap, but it's not free.
+
+## A useful pattern
+
+```ts
+const el = document.querySelector(".strip");
+const onScroll = () => {
+  const { top, height } = el.getBoundingClientRect();
+  const vh = window.innerHeight;
+  // 0 when bottom enters viewport, 1 when top leaves
+  const p = Math.min(1, Math.max(0, 1 - (top + height) / (vh + height)));
+  el.style.setProperty("--p", String(p));
+};
+window.addEventListener("scroll", onScroll, { passive: true });
+```
+
+Then in CSS you treat `--p` like any other variable — `transform: translateY(calc(var(--p) * -40px))`, opacity, hue, anything. The browser doesn't know it's animating; it just sees a value change.
+
+> The reason I still prefer this for hero sections: I can pause it cheaply, debug it in the inspector, and ship it on Safari without checking.
+
+That's it. The pattern's old. It still works.

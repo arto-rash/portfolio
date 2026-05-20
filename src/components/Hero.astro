@@ -1,0 +1,98 @@
+---
+import profile from "../data/profile.json";
+
+const year = new Date().getFullYear();
+---
+
+<section
+  id="top"
+  data-spotlight
+  class="relative isolate min-h-[100svh] pt-24 pb-16 px-5 md:px-8 overflow-hidden"
+>
+  {/* Backgrounds */}
+  <div class="absolute inset-0 -z-10 bg-grid bg-grid-fade"></div>
+  <div class="spotlight"></div>
+
+  <div class="mx-auto max-w-6xl">
+    {/* Top row — meta */}
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-16" data-reveal>
+      <div class="flex items-center gap-3">
+        <span class="dot dot-pulse"></span>
+        <span class="eyebrow">available for {profile.availableFor} · {year}</span>
+      </div>
+      <div class="eyebrow">portfolio / v.2</div>
+    </div>
+
+    {/* Display name */}
+    <div class="grid grid-cols-12 gap-6 items-end">
+      <div class="col-span-12 lg:col-span-8" data-reveal style="--reveal-delay: 60ms">
+        <h1 class="font-display leading-[0.92] tracking-tight text-[clamp(58px,11vw,170px)]">
+          <span class="block">Full-stack</span>
+          <span class="block">
+            <span class="italic">developer</span>
+            <span class="text-ink-faint">,</span>
+          </span>
+          <span class="block">
+            <span class="text-accent">interface</span> obsessive.
+          </span>
+        </h1>
+      </div>
+
+      {/* Photo / portrait */}
+      <div class="col-span-12 lg:col-span-4 flex lg:justify-end" data-reveal style="--reveal-delay: 220ms">
+        <figure class="relative w-[180px] sm:w-[220px] lg:w-full lg:max-w-[280px] aspect-[3/4]">
+          <div class="absolute inset-0 border border-rule-hi rounded-[2px]"></div>
+          {profile.photo && (
+            <img
+              src={profile.photo}
+              alt={`${profile.name} portrait`}
+              class="absolute inset-1 w-[calc(100%-8px)] h-[calc(100%-8px)] object-cover grayscale hover:grayscale-0 transition-all duration-700"
+              loading="eager"
+              onerror="this.style.display='none'"
+            />
+          )}
+          {/* Caption */}
+          <figcaption class="absolute -bottom-7 left-0 right-0 flex justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint">
+            <span>{profile.shortName}</span>
+            <span>{profile.location.split(",")[0].toLowerCase()}</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+
+    {/* Intro paragraph */}
+    <div class="mt-24 grid grid-cols-12 gap-6" data-reveal style="--reveal-delay: 320ms">
+      <div class="col-span-12 md:col-span-2 eyebrow pt-2">about ↘</div>
+      <p class="col-span-12 md:col-span-8 text-[18px] md:text-[20px] leading-[1.55] text-ink-soft max-w-[60ch]">
+        {profile.intro}
+      </p>
+    </div>
+
+    {/* Stack strip */}
+    <div class="mt-16 grid grid-cols-12 gap-6" data-reveal style="--reveal-delay: 420ms">
+      <div class="col-span-12 md:col-span-2 eyebrow pt-1">stack</div>
+      <div class="col-span-12 md:col-span-10 stack-strip">
+        {profile.stack.map((s) => <span class="font-mono text-[13px] text-ink-soft">{s}</span>)}
+      </div>
+    </div>
+
+    {/* CTAs */}
+    <div class="mt-16 flex flex-wrap items-center gap-3" data-reveal style="--reveal-delay: 520ms">
+      <a href="#work" class="btn btn-primary magnetic" data-strength="0.18">
+        <span class="magnetic-inner">see selected work →</span>
+      </a>
+      <a href="#contact" class="btn magnetic" data-strength="0.18">
+        <span class="magnetic-inner">get in touch</span>
+      </a>
+      <a href="/blog" class="font-mono text-[12px] uppercase tracking-[0.14em] text-ink-soft hover:text-accent transition-colors ml-1">
+        read the writing →
+      </a>
+    </div>
+  </div>
+
+  {/* Scroll indicator */}
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-ink-faint">
+    <span>scroll</span>
+    <span class="block w-px h-8 bg-gradient-to-b from-ink-faint to-transparent"></span>
+  </div>
+</section>

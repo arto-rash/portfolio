@@ -1,0 +1,34 @@
+[
+  {
+    "title": "Speaker — Frontend Baku Meetup",
+    "organization": "Frontend Baku",
+    "date": "2025-09",
+    "description": "Talk on scroll-driven animations: building cinematic flows with CSS scroll-timeline and the JS fallbacks worth shipping today.",
+    "image": "/achievements/frontend-baku.jpg",
+    "link": "https://example.com/talk"
+  },
+  {
+    "title": "Featured — Awwwards Site of the Day",
+    "organization": "Awwwards",
+    "date": "2024-11",
+    "description": "Mapsmith picked up SOTD for the editor flow. The judges flagged the easing curves; the easing curves nearly killed me.",
+    "image": "/achievements/awwwards.jpg",
+    "link": "https://www.awwwards.com/"
+  },
+  {
+    "title": "Open-source maintainer",
+    "organization": "do-not-disturb.css",
+    "date": "2024-03",
+    "description": "Crossed 1.2k stars on GitHub. Replied to most of the issues, ignored the rude ones.",
+    "image": "/achievements/oss.jpg",
+    "link": "https://github.com/"
+  },
+  {
+    "title": "B.S. Computer Science",
+    "organization": "ADA University",
+    "date": "2022-06",
+    "description": "Graduated with a thesis on lazy rendering strategies in feed-heavy interfaces. Spent more time in the dev console than in the library.",
+    "image": "/achievements/degree.jpg",
+    "link": ""
+  }
+]

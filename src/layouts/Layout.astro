@@ -1,23 +1,182 @@
+---
+import "../styles/global.css";
+import profile from "../data/profile.json";
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  noLenis?: boolean;
+}
+
+const {
+  title = `${profile.name} — ${profile.role}`,
+  description = profile.tagline,
+  ogImage = "/og-default.png",
+  noLenis = false,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://example.com").toString();
+---
+
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
-</html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#0a0a0a" />
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+  </head>
+
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only fixed left-3 top-3 z-50 bg-bg px-3 py-2 border border-rule-hi rounded font-mono text-xs"
+      >skip to content</a
+    >
+
+    <slot />
+
+    {!noLenis && (
+      <script>
+        import Lenis from "lenis";
+
+        const lenis = new Lenis({
+          duration: 1.05,
+          easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          smoothWheel: true,
+          wheelMultiplier: 1,
+          touchMultiplier: 1.2,
+        });
+
+        function raf(time: number) {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // Anchor links use Lenis scrollTo
+        document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
+          a.addEventListener("click", (e) => {
+            const href = a.getAttribute("href");
+            if (!href || href === "#") return;
+            const target = document.querySelector(href);
+            if (!target) return;
+            e.preventDefault();
+            lenis.scrollTo(target as HTMLElement, { offset: -24, duration: 1.2 });
+          });
+        });
+
+        (window as any).__lenis = lenis;
+      </script>
+    )}
+
+    <script>
+      // Scroll-reveal via IntersectionObserver
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-in");
+              io.unobserve(entry.target);
+            }
+          }
+        },
+        { threshold: 0.08, rootMargin: "0px 0px -40px 0px" },
+      );
+      const observe = () => {
+        document.querySelectorAll("[data-reveal]:not(.is-in)").forEach((el) => io.observe(el));
+      };
+      observe();
+      // Re-scan after view transitions (Astro)
+      document.addEventListener("astro:page-load", observe);
+    </script>
+
+    <script>
+      // Magnetic hover — only on elements with .magnetic (CTAs)
+      const setup = () => {
+        document.querySelectorAll<HTMLElement>(".magnetic").forEach((el) => {
+          if (el.dataset.magneticBound) return;
+          el.dataset.magneticBound = "1";
+          const inner = el.querySelector<HTMLElement>(".magnetic-inner") ?? el;
+          const strength = Number(el.dataset.strength ?? 0.35);
+          const onMove = (e: PointerEvent) => {
+            const r = el.getBoundingClientRect();
+            const x = e.clientX - (r.left + r.width / 2);
+            const y = e.clientY - (r.top + r.height / 2);
+            inner.style.transform = `translate(${x * strength}px, ${y * strength}px)`;
+          };
+          const onLeave = () => {
+            inner.style.transform = "translate(0, 0)";
+          };
+          el.addEventListener("pointermove", onMove);
+          el.addEventListener("pointerleave", onLeave);
+        });
+      };
+      setup();
+      document.addEventListener("astro:page-load", setup);
+    </script>
+
+    <script>
+      // Hero spotlight — sets --mx/--my on [data-spotlight]
+      const bindSpotlight = () => {
+        document.querySelectorAll<HTMLElement>("[data-spotlight]").forEach((el) => {
+          if (el.dataset.spotBound) return;
+          el.dataset.spotBound = "1";
+          el.addEventListener("pointermove", (e) => {
+            const r = el.getBoundingClientRect();
+            el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+            el.style.setProperty("--my", `${e.clientY - r.top}px`);
+          });
+        });
+      };
+      bindSpotlight();
+      document.addEventListener("astro:page-load", bindSpotlight);
+    </script>
+
+    <script>
+      // Live local clock — every element with data-clock gets HH:MM in Asia/Baku
+      const tick = () => {
+        const fmt = new Intl.DateTimeFormat("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+          timeZone: "Asia/Baku",
+        });
+        const txt = fmt.format(new Date());
+        document.querySelectorAll<HTMLElement>("[data-clock]").forEach((el) => {
+          el.textContent = txt;
+        });
+      };
+      tick();
+      setInterval(tick, 15_000);
+    </script>
+
+    <script is:inline>
+      const s = "color:#d97757;font:600 13px ui-monospace,monospace";
+      console.log("%chey. nice to meet you.", s);
+    </script>
+  </body>
+</html>

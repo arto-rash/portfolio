@@ -1,0 +1,54 @@
+---
+import profile from "../data/profile.json";
+
+interface Props {
+  showHome?: boolean;
+}
+const { showHome = false } = Astro.props;
+---
+
+<header
+  class="fixed inset-x-0 top-0 z-40 backdrop-blur-md bg-bg/70 border-b border-rule"
+>
+  <div class="mx-auto max-w-6xl px-5 md:px-8 h-14 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2 group">
+      <span class="dot dot-pulse"></span>
+      <span class="font-mono text-[12px] tracking-[0.18em] uppercase text-ink-soft group-hover:text-ink transition-colors">
+        {profile.shortName}.{profile.lastName}
+      </span>
+    </a>
+
+    <nav class="hidden md:flex items-center gap-6 font-mono text-[12px] tracking-[0.12em] uppercase text-ink-soft">
+      {showHome && <a href="/" class="hover:text-accent transition-colors">home</a>}
+      <a href={showHome ? "/#work" : "#work"} class="hover:text-accent transition-colors">work</a>
+      <a href={showHome ? "/#achievements" : "#achievements"} class="hover:text-accent transition-colors">milestones</a>
+      <a href="/blog" class="hover:text-accent transition-colors">writing</a>
+      <a href={showHome ? "/#contact" : "#contact"} class="hover:text-accent transition-colors">contact</a>
+    </nav>
+
+    <div class="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint">
+      <span class="hidden sm:inline">baku</span>
+      <span class="hidden sm:inline text-ink-dim">·</span>
+      <span class="tabular text-ink-soft" data-clock>--:--</span>
+    </div>
+  </div>
+
+  {/* Scroll progress bar */}
+  <div class="absolute bottom-0 left-0 h-px w-full bg-transparent">
+    <div id="nav-progress" class="h-full bg-accent" style="width:0%"></div>
+  </div>
+</header>
+
+<script>
+  const bar = document.getElementById("nav-progress");
+  if (bar) {
+    const onScroll = () => {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+      bar.style.width = pct.toFixed(2) + "%";
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
+</script>

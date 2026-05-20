@@ -1,0 +1,30 @@
+---
+title: "Six pixels and a 60ms timing change"
+date: 2026-02-09
+excerpt: "On the parts of UI work that don't show up in a PR description."
+tags: ["craft", "design"]
+draft: false
+---
+
+There's a sentence I keep coming back to when I'm reviewing my own work, and I think it explains why some interfaces feel obviously *good* and others feel obviously *fine*.
+
+**Most of the difference between good and great is six pixels and a 60ms timing change.**
+
+I don't mean that literally. I mean: by the time you're deciding whether a layout works, the wrong things to be tweaking are the layout. The decisions that make the experience feel inevitable are downstream — the easing curve on a button press, the gap between a label and its input, the moment a dropdown chooses to close, the small bounce when a list reorders.
+
+These things aren't in the brief. They aren't in the spec. They aren't in the Figma file. They show up when you build it and *use it*, and you notice that the chrome of the thing is keeping you from disappearing into it. Which is the goal of any good interface — to get out of the way.
+
+## What this looks like in practice
+
+1. You read a PR and the diff is "tweak transition timing on the menu". You almost reject it as too small. You should approve it.
+2. You sit with a feature for a day. Halfway through, you realise the button feels heavy. You don't know why yet. That's the prompt. Investigate it.
+3. You disable an animation to "ship it" and the page feels *more* alive. The animation was lying. Cut it.
+
+## A short list of things I now treat as load-bearing
+
+- Easing curves. `cubic-bezier(0.2, 0.7, 0.2, 1)` lives in my muscle memory and almost always reads as "premium".
+- Hit area separate from visual area. Touch targets shouldn't follow the visual.
+- The moment of *commitment* — when a button press becomes an action — should be sub-100ms.
+- Inertia in scroll. The web spent twenty years pretending scroll wasn't a feature. It is.
+
+None of this shows up in a job description. But it's what I'd defend at a dinner party. So here it is, on the internet, where it belongs.

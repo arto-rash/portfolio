@@ -1,0 +1,49 @@
+---
+import projects from "../data/projects.json";
+import { resolveProjectImages } from "../lib/og";
+import ProjectCard from "./ProjectCard.astro";
+
+const resolved = await resolveProjectImages(projects);
+---
+
+<section id="work" class="relative px-5 md:px-8 py-28 md:py-36">
+  <div class="mx-auto max-w-6xl">
+    <div class="flex items-end justify-between mb-10" data-reveal>
+      <div>
+        <div class="eyebrow mb-3">§ 01 — selected work</div>
+        <h2 class="font-display text-[44px] md:text-[64px] leading-[1] tracking-tight">
+          Things I built<span class="text-accent">.</span>
+        </h2>
+      </div>
+      <div class="hidden md:block font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">
+        {projects.length.toString().padStart(2, "0")} entries
+      </div>
+    </div>
+
+    <p class="text-ink-soft max-w-[58ch] mb-8" data-reveal>
+      Each line is a project I'd actually defend. Hover any title to see what it looks like in
+      the wild — image is fetched from the site itself when possible. Links open in new tabs.
+    </p>
+
+    <div>
+      {resolved.map((p, i) => (
+        <ProjectCard
+          index={i}
+          total={resolved.length}
+          slug={p.slug}
+          title={p.title}
+          tagline={p.tagline}
+          year={p.year}
+          role={p.role}
+          status={p.status}
+          description={p.description}
+          stack={p.stack}
+          url={p.url}
+          source={p.source}
+          accent={p.accent}
+          resolvedImage={p.resolvedImage}
+        />
+      ))}
+    </div>
+  </div>
+</section>

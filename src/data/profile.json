@@ -1,0 +1,33 @@
+{
+  "name": "Artoghrul Rashid",
+  "shortName": "artoghrul",
+  "lastName": "rashid",
+  "role": "Full-stack Developer",
+  "location": "Baku, Azerbaijan",
+  "timezone": "Asia/Baku",
+  "available": true,
+  "availableFor": "freelance & full-time",
+  "yearsExperience": 4,
+  "photo": "/me.jpg",
+  "tagline": "Building interfaces that don't feel like they were built — and the systems underneath them.",
+  "intro": "I'm a full-stack developer who happens to care a lot about the parts of an app most people scroll past — the easing curve on a button press, how a list reorders, the way a section breathes between scroll-snaps — and spends just as much time in the request handlers, the schemas, and the queries underneath them. I gravitate toward projects where the whole stack has to agree with itself, where the interface is honest about what the server actually does. Right now I'm based in Baku, shipping mostly with TypeScript, Node, Postgres, and the parts of the web platform that don't get enough credit.",
+  "stack": [
+    "TypeScript",
+    "React",
+    "Astro",
+    "Next.js",
+    "Node",
+    "Hono",
+    "Postgres",
+    "Drizzle",
+    "Tailwind",
+    "Lenis"
+  ],
+  "social": {
+    "email": "rashid.artoghrul@gmail.com",
+    "github": "https://github.com/",
+    "linkedin": "https://linkedin.com/in/",
+    "twitter": "https://twitter.com/",
+    "bluesky": "https://bsky.app/"
+  }
+}

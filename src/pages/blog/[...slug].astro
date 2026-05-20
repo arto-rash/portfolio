@@ -1,0 +1,79 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const wordCount = String(post.body ?? "").split(/\s+/).length;
+const readMin = Math.max(1, Math.round(wordCount / 220));
+
+const fmt = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "long", year: "numeric" }).format(post.data.date);
+---
+
+<Layout title={`${post.data.title} — Artoghrul Rashid`} description={post.data.excerpt}>
+  <Nav showHome />
+  <main id="main" class="pt-32 pb-24 px-5 md:px-8">
+    <article class="mx-auto max-w-2xl">
+      {/* Back link */}
+      <a href="/blog" class="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:text-accent transition-colors link-arrow">
+        <span class="arrow">←</span><span>all posts</span>
+      </a>
+
+      <header class="mt-10 mb-12">
+        <div class="flex items-center gap-3 eyebrow mb-5">
+          <span>{fmt}</span>
+          <span class="text-ink-dim">·</span>
+          <span>{readMin} min read</span>
+          {post.data.tags.length > 0 && (
+            <>
+              <span class="text-ink-dim">·</span>
+              <span>{post.data.tags.join(" · ")}</span>
+            </>
+          )}
+        </div>
+        <h1 class="font-display text-[44px] md:text-[64px] leading-[1.02] tracking-tight" data-reveal>
+          {post.data.title}
+        </h1>
+        <p class="mt-6 text-[18px] text-ink-soft max-w-[58ch]" data-reveal style="--reveal-delay:100ms">
+          {post.data.excerpt}
+        </p>
+      </header>
+
+      {post.data.cover && (
+        <img
+          src={post.data.cover}
+          alt={post.data.title}
+          class="w-full rounded-[3px] border border-rule mb-12"
+          data-reveal
+        />
+      )}
+
+      <div class="prose" data-reveal>
+        <Content />
+      </div>
+
+      <hr class="my-16" />
+
+      <div class="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint">
+        <a href="/blog" class="link-arrow hover:text-accent transition-colors">
+          <span class="arrow">←</span><span>all posts</span>
+        </a>
+        <a href="/#contact" class="link-arrow hover:text-accent transition-colors">
+          <span>say hi</span><span class="arrow">→</span>
+        </a>
+      </div>
+    </article>
+  </main>
+  <Footer />
+</Layout>
