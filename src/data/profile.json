@@ -8,7 +8,7 @@
   "available": true,
   "availableFor": "freelance & full-time",
   "yearsExperience": 4,
-  "photo": "/me.jpg",
+  "photo": "/selfie.jpeg",
   "tagline": "Full-stack engineer with electronics roots, based in Baku.",
   "intro": "I'm a full-stack software engineer — equally at home in the request handlers and the render loop. I write the schema, the API, the queries, and the UI, and I care about all of them: a 400ms query is a UX bug, and so is an easing curve that lies about what just happened. I came up through electronics before I came up through the web — for a couple of years I taught robotics, programming, and circuit work at an education center, which is where I learned that explaining something out loud is the fastest way to find out you don't actually understand it yet. These days I'm in Baku, shipping mostly in TypeScript, Node, and Postgres, with a soldering iron still within arm's reach.",
   "stack": [

@@ -27,7 +27,8 @@ function extractOg(html: string): string | null {
   const patterns = [
     /<meta[^>]+property=["']og:image(?::secure_url)?["'][^>]+content=["']([^"']+)["']/i,
     /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image(?::secure_url)?["']/i,
-    /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i,
+    /<meta[^>]+name=["']twitter:image(?::src)?["'][^>]+content=["']([^"']+)["']/i,
+    /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image(?::src)?["']/i,
   ];
   for (const re of patterns) {
     const m = html.match(re);
@@ -36,79 +37,116 @@ function extractOg(html: string): string | null {
   return null;
 }
 
-async function downloadTo(url: string, dest: string): Promise<boolean> {
-  try {
-    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
-    if (!res.ok) return false;
-    const buf = Buffer.from(await res.arrayBuffer());
-    await mkdir(path.dirname(dest), { recursive: true });
-    await writeFile(dest, buf);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 function extFromUrl(u: string): string {
   try {
     const p = new URL(u).pathname.toLowerCase();
-    const m = p.match(/\.(png|jpe?g|webp|avif|gif|svg)$/);
+    const m = p.match(/\.(png|jpe?g|webp|avif|gif|svg)(?:$|[?#])/);
     return m ? m[1].replace('jpeg', 'jpg') : 'png';
   } catch {
     return 'png';
   }
 }
 
-export async function resolveOgImage(slug: string, url: string | undefined): Promise<string | null> {
-  if (!url) return null;
+const UA =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 
-  const manifest = await readManifest();
-  const cached = manifest[slug];
-  const now = Date.now();
+function extFromContentType(ct: string | null): string {
+  if (!ct) return 'png';
+  if (ct.includes('jpeg') || ct.includes('jpg')) return 'jpg';
+  if (ct.includes('webp')) return 'webp';
+  if (ct.includes('gif')) return 'gif';
+  if (ct.includes('avif')) return 'avif';
+  return 'png';
+}
 
-  if (cached && now - cached.fetchedAt < TTL_MS) {
-    if (cached.file && existsSync(path.join(PUBLIC_DIR, cached.file))) {
-      return `/og/${cached.file}`;
-    }
-    if (cached.file === null) return null;
-  }
+async function saveImage(buf: Buffer, slug: string, ext: string): Promise<string> {
+  const file = `${slug}.${ext}`;
+  await mkdir(PUBLIC_DIR, { recursive: true });
+  await writeFile(path.join(PUBLIC_DIR, file), buf);
+  return file;
+}
 
+// 1st choice: the site's declared og:image / twitter:image.
+async function fetchOgFile(slug: string, url: string): Promise<string | null> {
   try {
     const res = await fetch(url, {
-      signal: AbortSignal.timeout(8000),
-      headers: { 'user-agent': 'Mozilla/5.0 (portfolio og-fetcher)' },
+      signal: AbortSignal.timeout(12000),
+      redirect: 'follow',
+      headers: { 'user-agent': UA, accept: 'text/html,application/xhtml+xml' },
     });
-    if (!res.ok) throw new Error(String(res.status));
+    if (!res.ok) return null;
     const html = await res.text();
     const og = extractOg(html);
-    if (!og) {
-      manifest[slug] = { fetchedAt: now, file: null };
-      await writeManifest(manifest);
-      return null;
-    }
-    const absolute = new URL(og, url).toString();
-    const ext = extFromUrl(absolute);
-    const file = `${slug}.${ext}`;
-    const ok = await downloadTo(absolute, path.join(PUBLIC_DIR, file));
-    if (!ok) throw new Error('download');
-    manifest[slug] = { fetchedAt: now, file };
-    await writeManifest(manifest);
-    return `/og/${file}`;
+    if (!og) return null;
+
+    const absolute = new URL(og, res.url || url).toString();
+    const imgRes = await fetch(absolute, {
+      signal: AbortSignal.timeout(12000),
+      redirect: 'follow',
+      headers: { 'user-agent': UA },
+    });
+    if (!imgRes.ok) return null;
+
+    const buf = Buffer.from(await imgRes.arrayBuffer());
+    if (buf.byteLength < 512) return null; // tiny = tracking pixel / error img
+    return saveImage(buf, slug, extFromUrl(absolute));
   } catch {
-    manifest[slug] = { fetchedAt: now, file: null };
-    await writeManifest(manifest);
     return null;
   }
 }
 
-export async function resolveProjectImages<T extends { slug: string; image?: string; url?: string }>(
-  projects: T[],
-): Promise<(T & { resolvedImage: string | null })[]> {
-  return Promise.all(
+// 2nd choice: a live screenshot of the page (thum.io, no key required).
+async function fetchScreenshot(slug: string, url: string): Promise<string | null> {
+  try {
+    const shot = `https://image.thum.io/get/width/1000/crop/750/${url}`;
+    const res = await fetch(shot, {
+      signal: AbortSignal.timeout(30000),
+      redirect: 'follow',
+      headers: { 'user-agent': UA },
+    });
+    if (!res.ok) return null;
+    const ct = res.headers.get('content-type') ?? '';
+    if (!ct.startsWith('image/')) return null;
+    const buf = Buffer.from(await res.arrayBuffer());
+    if (buf.byteLength < 2048) return null; // too small to be a real render
+    return saveImage(buf, slug, extFromContentType(ct));
+  } catch {
+    return null;
+  }
+}
+
+export async function resolveProjectImages<
+  T extends { slug: string; image?: string; url?: string },
+>(projects: T[]): Promise<(T & { resolvedImage: string | null })[]> {
+  const manifest = await readManifest();
+  const now = Date.now();
+
+  const results = await Promise.all(
     projects.map(async (p) => {
+      // 0. "none" opts out — use the branded gradient (good for no-UI backends)
+      if (p.image?.trim() === 'none') return { ...p, resolvedImage: null };
+      // 1. manual override always wins
       if (p.image && p.image.trim()) return { ...p, resolvedImage: p.image };
-      const resolved = await resolveOgImage(p.slug, p.url);
-      return { ...p, resolvedImage: resolved };
+      if (!p.url) return { ...p, resolvedImage: null };
+
+      // 2. fresh cache hit
+      const cached = manifest[p.slug];
+      if (cached && now - cached.fetchedAt < TTL_MS) {
+        if (cached.file && existsSync(path.join(PUBLIC_DIR, cached.file))) {
+          return { ...p, resolvedImage: `/og/${cached.file}` };
+        }
+        if (cached.file === null) return { ...p, resolvedImage: null };
+      }
+
+      // 3. fetch live: og:image first, then a screenshot. Mutate the shared
+      //    (in-memory) manifest synchronously — no concurrent file writes.
+      const file = (await fetchOgFile(p.slug, p.url)) ?? (await fetchScreenshot(p.slug, p.url));
+      manifest[p.slug] = { fetchedAt: now, file };
+      return { ...p, resolvedImage: file ? `/og/${file}` : null };
     }),
   );
+
+  // single write — no concurrent clobbering
+  await writeManifest(manifest);
+  return results;
 }
