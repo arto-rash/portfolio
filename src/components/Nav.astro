@@ -21,16 +21,15 @@ const { showHome = false } = Astro.props;
     <nav class="hidden md:flex items-center gap-6 font-mono text-[12px] tracking-[0.12em] uppercase text-ink-soft">
       {showHome && <a href="/" class="hover:text-accent transition-colors">home</a>}
       <a href={showHome ? "/#work" : "#work"} class="hover:text-accent transition-colors">work</a>
+      <a href={showHome ? "/#experience" : "#experience"} class="hover:text-accent transition-colors">experience</a>
       <a href={showHome ? "/#achievements" : "#achievements"} class="hover:text-accent transition-colors">milestones</a>
       <a href="/blog" class="hover:text-accent transition-colors">writing</a>
       <a href={showHome ? "/#contact" : "#contact"} class="hover:text-accent transition-colors">contact</a>
     </nav>
 
-    <div class="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint">
-      <span class="hidden sm:inline">baku</span>
-      <span class="hidden sm:inline text-ink-dim">·</span>
-      <span class="tabular text-ink-soft" data-clock>--:--</span>
-    </div>
+    <a href="/blog" class="md:hidden font-mono text-[12px] uppercase tracking-[0.12em] text-ink-soft hover:text-accent transition-colors">
+      writing
+    </a>
   </div>
 
   {/* Scroll progress bar */}

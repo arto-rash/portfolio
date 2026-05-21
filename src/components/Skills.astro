@@ -1,0 +1,41 @@
+---
+import profile from "../data/profile.json";
+---
+
+<section id="skills" class="relative px-5 md:px-8 py-28 md:py-36">
+  <div class="mx-auto max-w-6xl">
+    <div class="mb-12" data-reveal>
+      <div class="eyebrow mb-3">§ 03 – toolkit</div>
+      <h2 class="font-display text-[44px] md:text-[64px] leading-[1.02]">
+        What I <span class="mark mark-tilt">work with</span>.
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-x-12 gap-y-10">
+      <div class="md:col-span-8 space-y-10">
+        {profile.skillGroups.map((g, i) => (
+          <div data-reveal style={`--reveal-delay:${i * 70}ms`}>
+            <div class="eyebrow mb-4">{g.label}</div>
+            <ul class="flex flex-wrap gap-2.5">
+              {g.items.map((s) => <li class="tag text-[12.5px]">{s}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      <aside class="md:col-span-4 space-y-10">
+        <div data-reveal>
+          <div class="eyebrow mb-4">languages</div>
+          <ul class="space-y-2">
+            {profile.languages.map((l) => (
+              <li class="flex items-baseline justify-between gap-3 border-b border-rule pb-2">
+                <span class="text-[15px] text-ink">{l.name}</span>
+                <span class="font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint">{l.level}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,17 @@
+{
+  "intro": "Away from the keyboard I'm usually holding a different kind of instrument. Guitar and bass are home; accordion and drums I can fake convincingly enough to have fun. Time in an orchestra, a vocal jazz group, and both a jazz and a rock band – there's a gold medal from the Maine Jazz Festival on bass somewhere.",
+  "instruments": [
+    { "name": "Guitar", "level": "main" },
+    { "name": "Bass", "level": "main" },
+    { "name": "Accordion", "level": "a little" },
+    { "name": "Drums", "level": "a little" }
+  ],
+  "songOfTheDay": {
+    "title": "Teen Town",
+    "artist": "Weather Report",
+    "note": "Jaco's bass line – still chasing that feel.",
+    "url": "",
+    "updated": "2026-05-21"
+  },
+  "gallery": []
+}

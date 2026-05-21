@@ -1,74 +1,61 @@
 ---
 import achievements from "../data/achievements.json";
 
-function formatDate(iso: string) {
-  const d = new Date(iso + (iso.length === 7 ? "-01" : ""));
-  return new Intl.DateTimeFormat("en-GB", { month: "short", year: "numeric" }).format(d);
-}
+const items = achievements.map((a) => {
+  const hl = (a.highlight ?? "").trim();
+  const idx = hl ? a.detail.toLowerCase().indexOf(hl.toLowerCase()) : -1;
+  if (hl && idx >= 0) {
+    return {
+      ...a,
+      before: a.detail.slice(0, idx),
+      markText: a.detail.slice(idx, idx + hl.length),
+      after: a.detail.slice(idx + hl.length),
+    };
+  }
+  return { ...a, before: a.detail, markText: "", after: "" };
+});
 ---
 
 <section id="achievements" class="relative px-5 md:px-8 py-28 md:py-36 bg-bg-2 border-y border-rule">
   <div class="mx-auto max-w-6xl">
     <div class="flex items-end justify-between mb-12" data-reveal>
       <div>
-        <div class="eyebrow mb-3">§ 02 — milestones</div>
-        <h2 class="font-display text-[44px] md:text-[64px] leading-[1] tracking-tight">
-          The receipts<span class="text-accent">.</span>
+        <div class="eyebrow mb-3">§ 04 – milestones</div>
+        <h2 class="font-display text-[44px] md:text-[64px] leading-[1.02]">
+          Proof of <span class="mark">work</span>.
         </h2>
       </div>
       <div class="hidden md:block font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">
-        {achievements.length.toString().padStart(2, "0")} on file
+        rovers · robots · stages
       </div>
     </div>
 
-    <p class="text-ink-soft max-w-[58ch] mb-12" data-reveal>
-      Talks, features, degrees, and the occasional sticker on the laptop. Each card has an
-      image slot — drop yours into <code class="font-mono text-[13px] text-ink">/public/achievements/</code> and the path lives in JSON.
+    <p class="text-ink-soft max-w-[58ch] mb-10" data-reveal>
+      A mix of robotics and STEM competitions, hackathons, olympiads, and a couple of things that
+      have nothing to do with a keyboard.
     </p>
 
-    <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      {achievements.map((a, i) => (
+    <ol class="border-t border-rule">
+      {items.map((a, i) => (
         <li
-          class="group relative border border-rule rounded-[2px] overflow-hidden bg-bg hover:border-accent/50 transition-colors"
+          class="grid grid-cols-12 gap-x-4 gap-y-1 py-6 border-b border-rule"
           data-reveal
-          style={`--reveal-delay:${i * 80}ms`}
+          style={`--reveal-delay:${(i % 6) * 50}ms`}
         >
-          <a
-            href={a.link || undefined}
-            target={a.link ? "_blank" : undefined}
-            rel={a.link ? "noreferrer" : undefined}
-            class="block"
-          >
-            {/* Image slot */}
-            <div class="relative aspect-[4/3] overflow-hidden bg-surface">
-              <img
-                src={a.image}
-                alt={a.title}
-                class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-[1.03]"
-                loading="lazy"
-                onerror="this.style.display='none';this.parentElement.classList.add('preview-fallback')"
-                style="--accent: var(--color-accent)"
-              />
-              <div class="absolute top-3 left-3 font-mono text-[10px] uppercase tracking-[0.16em] text-ink bg-bg/80 backdrop-blur-sm px-2 py-1 rounded-sm border border-rule">
-                {formatDate(a.date)}
-              </div>
-            </div>
-
-            <div class="p-5">
-              <div class="eyebrow mb-2">{a.organization}</div>
-              <h3 class="font-display text-[22px] leading-[1.15] mb-2 group-hover:text-accent transition-colors">
-                {a.title}
-              </h3>
-              <p class="text-[14px] leading-[1.55] text-ink-soft">{a.description}</p>
-              {a.link && (
-                <div class="mt-4 link-arrow font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint group-hover:text-accent transition-colors">
-                  <span>open</span><span class="arrow">↗</span>
-                </div>
-              )}
-            </div>
-          </a>
+          <div class="col-span-12 md:col-span-2 font-mono text-[12px] text-ink-faint tabular">
+            {a.when}
+          </div>
+          <div class="col-span-12 md:col-span-8">
+            <h3 class="font-display text-[22px] md:text-[26px] leading-[1.15]">{a.title}</h3>
+            <p class="mt-1.5 text-[15px] leading-[1.6] text-ink-soft max-w-prose">
+              {a.before}{a.markText && <span class="mark">{a.markText}</span>}{a.after}
+            </p>
+          </div>
+          <div class="col-span-12 md:col-span-2 md:text-right font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint">
+            {a.category}
+          </div>
         </li>
       ))}
-    </ul>
+    </ol>
   </div>
 </section>

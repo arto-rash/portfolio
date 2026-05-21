@@ -1,0 +1,107 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import projects from "../../data/projects.json";
+import { resolveProjectImages } from "../../lib/og";
+import Slideshow from "../../components/Slideshow.astro";
+
+export async function getStaticPaths() {
+  const resolved = await resolveProjectImages(projects);
+  return resolved.map((p, i) => ({
+    params: { slug: p.slug },
+    props: {
+      project: p,
+      prev: resolved[(i - 1 + resolved.length) % resolved.length],
+      next: resolved[(i + 1) % resolved.length],
+    },
+  }));
+}
+
+const { project, prev, next } = Astro.props;
+
+// gallery: manual screenshots win, else the single auto-resolved preview
+const gallery: string[] =
+  project.screenshots && project.screenshots.length
+    ? project.screenshots
+    : project.resolvedImage
+      ? [project.resolvedImage]
+      : [];
+
+const links = project.links?.length
+  ? project.links
+  : project.url
+    ? [{ label: "Live", url: project.url }]
+    : [];
+---
+
+<Layout title={`${project.title} – Artoghrul Rashid`} description={project.description}>
+  <Nav showHome />
+  <main id="main" class="pt-32 pb-24 px-5 md:px-8">
+    <article class="mx-auto max-w-4xl">
+      <a href="/#work" class="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:text-accent transition-colors link-arrow">
+        <span class="arrow">←</span><span>all work</span>
+      </a>
+
+      <header class="mt-10 mb-10">
+        <div class="flex flex-wrap items-center gap-3 eyebrow mb-5">
+          <span class={project.status === "live" ? "text-accent" : "text-warn"}>{project.status}</span>
+          <span class="text-ink-dim">·</span>
+          <span>{project.role}</span>
+        </div>
+        <h1 class="font-display text-[48px] md:text-[80px] leading-[1.02]" data-reveal>
+          {project.title}
+        </h1>
+        <p class="mt-4 text-[18px] md:text-[22px] text-ink-soft max-w-[60ch]" data-reveal style="--reveal-delay:80ms">
+          {project.tagline}
+        </p>
+
+        <div class="mt-7 flex flex-wrap items-center gap-3" data-reveal style="--reveal-delay:160ms">
+          {links.map((l, i) => (
+            <a href={l.url} target="_blank" rel="noreferrer" class:list={["btn", "magnetic", i === 0 && "btn-primary"]} data-strength="0.18">
+              <span class="magnetic-inner">{l.label} ↗</span>
+            </a>
+          ))}
+        </div>
+      </header>
+
+      {/* Gallery – slideshow when there are multiple shots, single image otherwise */}
+      {gallery.length > 0 && (
+        <div class="mb-12" data-reveal>
+          <Slideshow images={gallery} alt={project.title} ratio="aspect-[16/10]" />
+        </div>
+      )}
+
+      {/* Body */}
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-x-10 gap-y-8">
+        <div class="md:col-span-8">
+          <p class="text-[18px] leading-[1.7] text-ink">{project.longDescription ?? project.description}</p>
+        </div>
+        <aside class="md:col-span-4 space-y-6">
+          <div>
+            <div class="eyebrow mb-2">stack</div>
+            <ul class="flex flex-wrap gap-2">
+              {project.stack.map((s) => <li class="tag">{s}</li>)}
+            </ul>
+          </div>
+          <div>
+            <div class="eyebrow mb-2">role</div>
+            <div class="font-mono text-[13px] text-ink-soft">{project.role}</div>
+          </div>
+        </aside>
+      </div>
+
+      <hr class="my-14" />
+
+      <nav class="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.14em]">
+        <a href={`/work/${prev.slug}`} class="link-arrow text-ink-faint hover:text-accent transition-colors">
+          <span class="arrow">←</span><span>{prev.title}</span>
+        </a>
+        <a href={`/work/${next.slug}`} class="link-arrow text-ink-faint hover:text-accent transition-colors text-right">
+          <span>{next.title}</span><span class="arrow">→</span>
+        </a>
+      </nav>
+    </article>
+  </main>
+  <Footer />
+</Layout>

@@ -123,7 +123,7 @@ export async function resolveProjectImages<
 
   const results = await Promise.all(
     projects.map(async (p) => {
-      // 0. "none" opts out — use the branded gradient (good for no-UI backends)
+      // 0. "none" opts out – use the branded gradient (good for no-UI backends)
       if (p.image?.trim() === 'none') return { ...p, resolvedImage: null };
       // 1. manual override always wins
       if (p.image && p.image.trim()) return { ...p, resolvedImage: p.image };
@@ -139,14 +139,14 @@ export async function resolveProjectImages<
       }
 
       // 3. fetch live: og:image first, then a screenshot. Mutate the shared
-      //    (in-memory) manifest synchronously — no concurrent file writes.
+      //    (in-memory) manifest synchronously – no concurrent file writes.
       const file = (await fetchOgFile(p.slug, p.url)) ?? (await fetchScreenshot(p.slug, p.url));
       manifest[p.slug] = { fetchedAt: now, file };
       return { ...p, resolvedImage: file ? `/og/${file}` : null };
     }),
   );
 
-  // single write — no concurrent clobbering
+  // single write – no concurrent clobbering
   await writeManifest(manifest);
   return results;
 }

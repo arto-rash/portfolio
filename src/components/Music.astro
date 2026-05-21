@@ -1,0 +1,77 @@
+---
+import music from "../data/music.json";
+import Slideshow from "./Slideshow.astro";
+
+const sotd = music.songOfTheDay;
+const updated = sotd.updated
+  ? new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short" }).format(new Date(sotd.updated))
+  : "";
+---
+
+<section id="music" class="relative px-5 md:px-8 py-28 md:py-36">
+  <div class="mx-auto max-w-6xl">
+    <div class="mb-12" data-reveal>
+      <div class="eyebrow mb-3">§ 05 – off the clock</div>
+      <h2 class="font-display text-[44px] md:text-[64px] leading-[1.02]">
+        Also: <span class="mark mark-tilt">music</span>.
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
+      {/* Left: blurb + instruments */}
+      <div class="lg:col-span-7" data-reveal>
+        <p class="text-[17px] md:text-[18px] leading-[1.7] text-ink-soft max-w-[58ch]">{music.intro}</p>
+
+        <ul class="mt-8 flex flex-wrap gap-3">
+          {music.instruments.map((inst) => (
+            <li class="flex items-baseline gap-2 border border-rule-hi rounded-full px-4 py-2">
+              <span class="font-display text-[20px] leading-none">{inst.name}</span>
+              <span class="font-mono text-[10px] uppercase tracking-[0.12em] text-ink-faint">{inst.level}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Right: song of the day */}
+      <div class="lg:col-span-5" data-reveal style="--reveal-delay:120ms">
+        <div class="border border-rule-hi rounded-lg p-6 bg-bg-2">
+          <div class="flex items-center justify-between">
+            <span class="eyebrow">song of the day</span>
+            <span class="eq" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          </div>
+
+          <div class="mt-5 flex items-center gap-4">
+            <div class="vinyl shrink-0" aria-hidden="true"></div>
+            <div class="min-w-0">
+              <div class="font-display text-[26px] leading-[1.1] truncate">{sotd.title}</div>
+              <div class="text-ink-soft truncate">{sotd.artist}</div>
+            </div>
+          </div>
+
+          {sotd.note && (
+            <p class="mt-4 text-[14px] italic text-ink-soft">“{sotd.note}”</p>
+          )}
+
+          <div class="mt-5 flex items-center justify-between border-t border-rule pt-4">
+            {sotd.url ? (
+              <a href={sotd.url} target="_blank" rel="noreferrer" class="link-arrow font-mono text-[12px] uppercase tracking-[0.12em] text-ink hover:text-accent transition-colors">
+                <span>listen</span><span class="arrow">↗</span>
+              </a>
+            ) : (
+              <span class="font-mono text-[12px] uppercase tracking-[0.12em] text-ink-faint">on repeat</span>
+            )}
+            {updated && <span class="font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint">upd. {updated}</span>}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Optional photo gallery – only renders if music.json has gallery images */}
+    {music.gallery.length > 0 && (
+      <div class="mt-14 max-w-3xl" data-reveal>
+        <div class="eyebrow mb-4">in the wild</div>
+        <Slideshow images={music.gallery} alt="Playing music" ratio="aspect-[3/2]" />
+      </div>
+    )}
+  </div>
+</section>

@@ -1,34 +1,98 @@
 [
   {
-    "title": "Lead Instructor — Robotics, Programming & Electronics",
-    "organization": "education center",
-    "date": "2022-09",
-    "description": "Two-plus years teaching teenagers Arduino, Raspberry Pi, Python, and circuit-level fundamentals. Built the lab curriculum from scratch — sensors, motors, and the kind of small autonomous robots that need to fail loudly before they work quietly.",
-    "image": "/achievements/teaching.jpg",
-    "link": ""
+    "title": "NASA Human Exploration Rover Challenge",
+    "when": "2025",
+    "year": 2025,
+    "category": "Robotics & STEM",
+    "highlight": "team captain",
+    "detail": "Team captain of one of 25 teams selected worldwide – the first and only team from Azerbaijan."
   },
   {
-    "title": "Embedded side-project — home telemetry",
-    "organization": "personal",
-    "date": "2024-04",
-    "description": "ESP32 + sensors + a small backend that streams readings over MQTT into Postgres, surfaced through a tiny dashboard. Solid reminder that hardware always finds the bug your unit tests didn't.",
-    "image": "/achievements/embedded.jpg",
-    "link": ""
+    "title": "Baku Metro Hackathon",
+    "when": "2025",
+    "year": 2025,
+    "category": "Hackathons",
+    "highlight": "1st place",
+    "detail": "1st place with my team “KhatAI”."
   },
   {
-    "title": "Open-source contributor",
-    "organization": "various",
-    "date": "2024-03",
-    "description": "Patches and small libraries across web tooling and embedded helpers. Reply to most issues. Ignore the rude ones.",
-    "image": "/achievements/oss.jpg",
-    "link": "https://github.com/"
+    "title": "Robotex Eurasia – quarter- & semi-finals",
+    "when": "2024–2025",
+    "year": 2025,
+    "category": "Robotics & STEM",
+    "highlight": "five 1st places",
+    "detail": "Five 1st places as a competitor, plus a 3rd place and a special-jury certificate as a mentor, across Azerbaijan and Türkiye rounds."
   },
   {
-    "title": "B.S. Computer Science",
-    "organization": "university",
-    "date": "2022-06",
-    "description": "Graduated with a thesis on lazy rendering strategies in feed-heavy interfaces. Spent more time in the dev console than in the library.",
-    "image": "/achievements/degree.jpg",
-    "link": ""
+    "title": "SAF STEAM Hackathon (international)",
+    "when": "2022 & 2024",
+    "year": 2022,
+    "category": "Hackathons",
+    "highlight": "1st place",
+    "detail": "1st place in 2022 and 3rd place in 2024."
+  },
+  {
+    "title": "Junior Balkan Mathematical Olympiad (JBMO)",
+    "when": "2021",
+    "year": 2021,
+    "category": "Academics",
+    "highlight": "represent Azerbaijan",
+    "detail": "One of 6 students selected to represent Azerbaijan."
+  },
+  {
+    "title": "National Mathematics & Informatics Olympiads",
+    "when": "2020 & 2021",
+    "year": 2021,
+    "category": "Academics",
+    "highlight": "finalist",
+    "detail": "Finalist in both the national maths and informatics olympiads of Azerbaijan."
+  },
+  {
+    "title": "SAGE Entrepreneurship Program (IDDA)",
+    "when": "2024",
+    "year": 2024,
+    "category": "Entrepreneurship",
+    "highlight": "36 of 300",
+    "detail": "Selected among 36 of 300 applicants and graduated the program, hosted by the Innovation and Digital Development Agency of Azerbaijan."
+  },
+  {
+    "title": "TikTok Startup Academy 3.0",
+    "when": "2024",
+    "year": 2024,
+    "category": "Entrepreneurship",
+    "highlight": "selected",
+    "detail": "Selected participant, hosted by AstanaHUB in Astana, Kazakhstan."
+  },
+  {
+    "title": "IAC & World Space Week",
+    "when": "2023–2024",
+    "year": 2024,
+    "category": "Space",
+    "highlight": "presented at IAC 2024",
+    "detail": "Volunteered for WSW 2023 and IAC 2023 with the National Space Agency of Azerbaijan; presented with a team at IAC 2024."
+  },
+  {
+    "title": "Maine Jazz Festival",
+    "when": "2022",
+    "year": 2022,
+    "category": "Music",
+    "highlight": "gold medal",
+    "detail": "Gold medal on bass with my jazz band."
+  },
+  {
+    "title": "SAT",
+    "when": "2021",
+    "year": 2021,
+    "category": "Academics",
+    "highlight": "1500",
+    "detail": "1500 SAT, 800 on SAT Subject Math Level 2, and 750 on SAT Physics."
+  },
+  {
+    "title": "Programming Club, Fryeburg Academy",
+    "when": "2021–2022",
+    "year": 2022,
+    "category": "Leadership",
+    "highlight": "founder",
+    "detail": "Founded and ran the programming club at my high school in Maine, USA."
   }
 ]

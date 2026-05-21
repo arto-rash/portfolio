@@ -1,49 +1,121 @@
 ---
 import projects from "../data/projects.json";
 import { resolveProjectImages } from "../lib/og";
-import ProjectCard from "./ProjectCard.astro";
 
 const resolved = await resolveProjectImages(projects);
+const statusColor = (s: string) =>
+  s === "live" ? "text-accent" : s === "shelved" ? "text-ink-faint" : "text-warn";
 ---
 
 <section id="work" class="relative px-5 md:px-8 py-28 md:py-36">
   <div class="mx-auto max-w-6xl">
-    <div class="flex items-end justify-between mb-10" data-reveal>
+    <div class="flex items-end justify-between mb-12" data-reveal>
       <div>
-        <div class="eyebrow mb-3">§ 01 — selected work</div>
-        <h2 class="font-display text-[44px] md:text-[64px] leading-[1] tracking-tight">
-          Things I built<span class="text-accent">.</span>
+        <div class="eyebrow mb-3">§ 01 – selected work</div>
+        <h2 class="font-display text-[44px] md:text-[64px] leading-[1.02]">
+          Things I&nbsp;<span class="mark mark-tilt">built</span>.
         </h2>
       </div>
       <div class="hidden md:block font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">
-        {projects.length.toString().padStart(2, "0")} entries
+        {projects.length.toString().padStart(2, "0")} projects
       </div>
     </div>
 
-    <p class="text-ink-soft max-w-[58ch] mb-8" data-reveal>
-      Each line is a project I'd actually defend. Hover any title to see what it looks like in
-      the wild — image is fetched from the site itself when possible. Links open in new tabs.
-    </p>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-8">
+      {/* List */}
+      <ul id="work-list" class="lg:col-span-7 border-t border-rule">
+        {resolved.map((p, i) => (
+          <li class="border-b border-rule">
+            <a
+              href={`/work/${p.slug}`}
+              class="work-row group block py-6"
+              data-preview={i}
+            >
+              <div class="flex items-baseline gap-4">
+                <span class="font-mono text-[12px] text-ink-faint tabular shrink-0">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <h3 class="work-title font-display text-[28px] md:text-[34px] leading-[1.1] flex-1 transition-colors">
+                  {p.title}
+                </h3>
+                <span class="hidden sm:inline arrow font-mono text-ink-faint group-hover:text-accent transition-all">↗</span>
+              </div>
 
-    <div>
-      {resolved.map((p, i) => (
-        <ProjectCard
-          index={i}
-          total={resolved.length}
-          slug={p.slug}
-          title={p.title}
-          tagline={p.tagline}
-          year={p.year}
-          role={p.role}
-          status={p.status}
-          description={p.description}
-          stack={p.stack}
-          url={p.url}
-          source={p.source}
-          accent={p.accent}
-          resolvedImage={p.resolvedImage}
-        />
-      ))}
+              <div class="mt-2 pl-9 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[12px] text-ink-faint">
+                <span class={statusColor(p.status)}>{p.status}</span>
+                <span class="text-ink-dim">·</span>
+                <span>{p.role}</span>
+                <span class="text-ink-dim">·</span>
+                <span class="text-ink-soft">{p.stack.slice(0, 3).join(" / ")}</span>
+              </div>
+
+              {/* Mobile inline preview */}
+              <div class="lg:hidden mt-4 pl-9">
+                <div
+                  class={`aspect-[16/10] w-full rounded-md border border-rule overflow-hidden ${p.resolvedImage ? "" : "preview-fallback"}`}
+                  style={`--accent:${p.accent}`}
+                >
+                  {p.resolvedImage ? (
+                    <img src={p.resolvedImage} alt={p.title} loading="lazy" class="w-full h-full object-cover object-top" />
+                  ) : (
+                    <div class="w-full h-full flex items-center justify-center font-display text-[44px] text-ink/25">
+                      {p.title.slice(0, 2).toLowerCase()}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      {/* Sticky preview pane (desktop) */}
+      <div class="hidden lg:block lg:col-span-5">
+        <div class="sticky top-24">
+          <div class="relative aspect-[4/3] rounded-lg border border-rule overflow-hidden bg-surface">
+            {resolved.map((p, i) => (
+              <div
+                class={`work-slide absolute inset-0 transition-opacity duration-300 ${p.resolvedImage ? "" : "preview-fallback"}`}
+                data-slide={i}
+                style={`opacity:${i === 0 ? 1 : 0};--accent:${p.accent}`}
+              >
+                {p.resolvedImage ? (
+                  <img src={p.resolvedImage} alt={p.title} class="w-full h-full object-cover object-top" />
+                ) : (
+                  <div class="w-full h-full flex flex-col items-center justify-center gap-2">
+                    <span class="font-display text-[64px] text-ink/25">{p.title.slice(0, 2).toLowerCase()}</span>
+                    <span class="font-mono text-[11px] uppercase tracking-[0.16em] text-ink-faint">no UI · backend</span>
+                  </div>
+                )}
+              </div>
+            ))}
+            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.16em] text-ink bg-bg/80 backdrop-blur-sm px-2.5 py-1.5 rounded">
+              <span id="preview-label">{resolved[0]?.title}</span>
+              <span class="text-ink-faint">hover ↑ · click to open</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
+
+<script>
+  const rows = Array.from(document.querySelectorAll<HTMLElement>(".work-row"));
+  const slides = Array.from(document.querySelectorAll<HTMLElement>(".work-slide"));
+  const label = document.getElementById("preview-label");
+  const titles = rows.map((r) => r.querySelector(".work-title")?.textContent?.trim() ?? "");
+
+  let active = 0;
+  const setActive = (i: number) => {
+    if (i === active) return;
+    active = i;
+    slides.forEach((s, j) => (s.style.opacity = j === i ? "1" : "0"));
+    if (label) label.textContent = titles[i];
+  };
+
+  rows.forEach((row, i) => {
+    row.addEventListener("mouseenter", () => setActive(i));
+    row.addEventListener("focusin", () => setActive(i));
+  });
+</script>

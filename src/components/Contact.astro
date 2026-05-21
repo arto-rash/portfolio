@@ -3,9 +3,9 @@ import profile from "../data/profile.json";
 
 const socials = [
   { label: "email", href: `mailto:${profile.social.email}`, value: profile.social.email },
+  { label: "phone", href: `tel:${profile.social.phone.replace(/[^+\d]/g, "")}`, value: profile.social.phone },
   { label: "github", href: profile.social.github, value: "@arto-rash" },
   { label: "linkedin", href: profile.social.linkedin, value: "/in/artoghrulrashid" },
-  { label: "twitter", href: profile.social.twitter, value: "@artoghrulrashid" },
 ].filter((s) => s.href && !s.href.endsWith("/"));
 ---
 
@@ -18,13 +18,13 @@ const socials = [
   </div>
 
   <div class="mx-auto max-w-6xl">
-    <div class="eyebrow mb-4" data-reveal>§ 04 — contact</div>
-    <h2 class="font-display text-[56px] md:text-[96px] leading-[0.95] tracking-tight max-w-[12ch]" data-reveal style="--reveal-delay:80ms">
-      Have something <span class="italic text-accent">interesting</span> to build?
+    <div class="eyebrow mb-4" data-reveal>§ 07 – contact</div>
+    <h2 class="font-display text-[56px] md:text-[96px] leading-[0.98] max-w-[13ch]" data-reveal style="--reveal-delay:80ms">
+      Have something <span class="mark">interesting</span> to build?
     </h2>
 
     <p class="mt-8 text-[17px] md:text-[19px] text-ink-soft max-w-[55ch]" data-reveal style="--reveal-delay:180ms">
-      I read everything, reply to most of it. The fastest way in is a real email — tell me
+      I read everything, reply to most of it. The fastest way in is a real email – tell me
       what you're working on, what's stuck, and what good looks like.
     </p>
 

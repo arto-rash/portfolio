@@ -7,26 +7,92 @@
   "timezone": "Asia/Baku",
   "available": true,
   "availableFor": "freelance & full-time",
-  "yearsExperience": 4,
   "photo": "/selfie.jpeg",
-  "tagline": "Full-stack engineer with electronics roots, based in Baku.",
-  "intro": "I'm a full-stack software engineer — equally at home in the request handlers and the render loop. I write the schema, the API, the queries, and the UI, and I care about all of them: a 400ms query is a UX bug, and so is an easing curve that lies about what just happened. I came up through electronics before I came up through the web — for a couple of years I taught robotics, programming, and circuit work at an education center, which is where I learned that explaining something out loud is the fastest way to find out you don't actually understand it yet. These days I'm in Baku, shipping mostly in TypeScript, Node, and Postgres, with a soldering iron still within arm's reach.",
+  "tagline": "Full-stack engineer, ex-robotics mentor, occasional bassist. Based in Baku.",
+  "intro": "I'm a full-stack web developer in Baku. Right now I build internal systems and landing pages at Megasec, freelance on CRMs, Shopify apps, and automation on the side, and study Computer Science at ADA. Before the web pulled me in, I spent two years teaching robotics, programming, and electronics to kids and coaching competition teams – still the best way I know to actually learn something: explain it to a twelve-year-old until it works. I write across the stack – React/Next and Astro up front, Laravel/Node with Mongo and MySQL behind – and there's usually an ESP32 and a soldering iron somewhere on the desk.",
   "stack": [
     "TypeScript",
     "React",
     "Next.js",
     "Astro",
-    "Node",
-    "Hono",
-    "Postgres",
-    "Drizzle",
+    "Node.js",
+    "Laravel",
+    "Express",
+    "MongoDB",
+    "MySQL",
     "Python",
-    "C++",
-    "Arduino",
+    "C/C++",
     "ESP32"
+  ],
+  "experience": [
+    {
+      "company": "Megasec LLC",
+      "location": "Baku, Azerbaijan",
+      "role": "Full-stack Web Developer",
+      "start": "2025-06",
+      "end": "",
+      "current": true,
+      "description": "Building internal management systems and backend services in Laravel/PHP – workflow automation and database-driven features – plus responsive landing pages in Next.js, with a focus on performance and UX."
+    },
+    {
+      "company": "Freelance",
+      "location": "Remote",
+      "role": "Software Engineer",
+      "start": "2023-12",
+      "end": "",
+      "current": true,
+      "description": "Web apps, CRM systems, and automation platforms in Node.js, Laravel, and Google Apps Script. Shopify integrations and frontends in Next.js, React, and Astro."
+    },
+    {
+      "company": "Enteskedu",
+      "location": "Baku, Azerbaijan",
+      "role": "Robotics, Programming & Electronics Mentor",
+      "start": "2023-06",
+      "end": "2024-10",
+      "current": false,
+      "description": "Taught kids aged 3–16 through project-based learning with VEX, LEGO SPIKE Prime, Arduino, and ESP32. Coached robotics competition teams, prepared students for international competitions, and trained staff."
+    }
+  ],
+  "education": [
+    {
+      "school": "ADA University",
+      "location": "Baku, Azerbaijan",
+      "degree": "B.S. Computer Science",
+      "start": "2024-09",
+      "end": "2028",
+      "current": true
+    },
+    {
+      "school": "Fryeburg Academy",
+      "location": "Fryeburg, Maine, USA",
+      "degree": "High School",
+      "start": "2021-09",
+      "end": "2022-06",
+      "current": false
+    }
+  ],
+  "skillGroups": [
+    {
+      "label": "Full-stack web",
+      "items": ["HTML/CSS", "JavaScript / TypeScript", "React", "Next.js", "Astro", "Node.js", "Express", "Laravel / PHP", "MongoDB", "MySQL"]
+    },
+    {
+      "label": "Systems & hardware",
+      "items": ["Python", "C / C++", "Arduino", "ESP32", "Google Apps Script", "Shopify API"]
+    },
+    {
+      "label": "Robotics teaching",
+      "items": ["LEGO SPIKE Prime", "VEX GO / 123 / IQ / VR", "Matatalab", "BBC micro:bit"]
+    }
+  ],
+  "languages": [
+    { "name": "Azerbaijani", "level": "Native" },
+    { "name": "Russian", "level": "Native" },
+    { "name": "English", "level": "Fluent" }
   ],
   "social": {
     "email": "rashid.artoghrul@gmail.com",
+    "phone": "+994 (10) 312 06 65",
     "github": "https://github.com/arto-rash",
     "linkedin": "https://linkedin.com/in/",
     "twitter": "https://twitter.com/",
