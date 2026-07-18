@@ -1,0 +1,143 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import site from "../data/site.json";
+
+const configured = !!site.sheetApi;
+
+// Paste this into Extensions → Apps Script in your sheet, then Deploy → New
+// deployment → Web app (execute as you, access: Anyone) and copy the /exec URL.
+const APPS_SCRIPT = `function doGet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const out = { settings: {}, posts: [] };
+
+  const s = ss.getSheetByName('settings');
+  if (s) {
+    s.getDataRange().getValues().slice(1).forEach(function (r) {
+      if (r[0]) out.settings[r[0]] = r[1];
+    });
+  }
+
+  const p = ss.getSheetByName('posts');
+  if (p) {
+    const rows = p.getDataRange().getValues();
+    const head = rows.shift();
+    rows.forEach(function (r) {
+      const o = {};
+      head.forEach(function (h, i) { o[h] = r[i]; });
+      if (o.slug) out.posts.push(o);
+    });
+  }
+
+  return ContentService
+    .createTextOutput(JSON.stringify(out))
+    .setMimeType(ContentService.MimeType.JSON);
+}`;
+---
+
+<Layout title="Admin – Artoghrul Rashid" description="Content dashboard" noindex noLenis>
+  <Nav showHome />
+  <main id="main" class="pt-32 pb-24 px-5 md:px-8">
+    <div class="mx-auto max-w-3xl">
+      <div class="flex items-baseline justify-between border-b border-rule pb-4">
+        <h1 class="eyebrow">admin · content dashboard</h1>
+        <span id="status" class="font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint">checking…</span>
+      </div>
+
+      {!configured && (
+        <p class="mt-6 text-[15px] leading-[1.7] text-ink-soft max-w-[60ch]">
+          No sheet connected yet — the site is running on its built-in content. Follow the
+          setup below, paste your Web-App URL into <code class="font-mono text-[13px]">src/data/site.json</code>,
+          and redeploy once. After that, edits to the sheet appear on the site live.
+        </p>
+      )}
+
+      {/* Live values */}
+      <section class="mt-12">
+        <div class="eyebrow border-b border-rule pb-3">current values</div>
+        <div id="values" class="mt-4 text-[14px] text-ink-soft">—</div>
+      </section>
+
+      {/* Posts */}
+      <section class="mt-12">
+        <div class="flex items-baseline justify-between border-b border-rule pb-3">
+          <div class="eyebrow">posts in sheet</div>
+          {site.sheetUrl && (
+            <a href={site.sheetUrl} target="_blank" rel="noreferrer" class="link-arrow font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint hover:text-ink transition-colors">
+              <span>open sheet</span><span class="arrow">↗</span>
+            </a>
+          )}
+        </div>
+        <div id="posts" class="mt-2 text-[14px] text-ink-soft">—</div>
+      </section>
+
+      {/* Setup */}
+      <section class="mt-16">
+        <div class="eyebrow border-b border-rule pb-3">setup · one time</div>
+        <ol class="mt-5 space-y-3 text-[14.5px] leading-[1.65] text-ink-soft list-decimal pl-5">
+          <li>Create a Google Sheet with two tabs: <code class="font-mono text-[13px]">settings</code> and <code class="font-mono text-[13px]">posts</code>.</li>
+          <li><strong class="text-ink">settings</strong> tab — two columns <code class="font-mono text-[13px]">key</code>, <code class="font-mono text-[13px]">value</code>. Rows: <code class="font-mono text-[13px]">available</code> (TRUE/FALSE), <code class="font-mono text-[13px]">availableFor</code>, <code class="font-mono text-[13px]">songTitle</code>, <code class="font-mono text-[13px]">songArtist</code>, <code class="font-mono text-[13px]">songNote</code>, <code class="font-mono text-[13px]">songUrl</code>.</li>
+          <li><strong class="text-ink">posts</strong> tab — header row: <code class="font-mono text-[13px]">slug, title, date, excerpt, tags, draft, body</code>. One post per row; <code class="font-mono text-[13px]">tags</code> comma-separated, <code class="font-mono text-[13px]">body</code> is Markdown.</li>
+          <li>Extensions → Apps Script, paste the code below, Deploy → New deployment → <strong class="text-ink">Web app</strong> (execute as you · access: Anyone), copy the <code class="font-mono text-[13px]">/exec</code> URL.</li>
+          <li>Put that URL in <code class="font-mono text-[13px]">src/data/site.json</code> → <code class="font-mono text-[13px]">sheetApi</code> (and the sheet's edit link in <code class="font-mono text-[13px]">sheetUrl</code>), then redeploy once.</li>
+        </ol>
+
+        <div class="eyebrow mt-8 mb-2">Apps Script</div>
+        <pre class="text-[12.5px] leading-[1.6] text-ink bg-bg-2 border border-rule p-4 overflow-x-auto"><code>{APPS_SCRIPT}</code></pre>
+      </section>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  import { loadSheet, fmtDate } from "../lib/sheet";
+
+  const esc = (s: string) =>
+    String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  const statusEl = document.getElementById("status")!;
+  const valuesEl = document.getElementById("values")!;
+  const postsEl = document.getElementById("posts")!;
+
+  loadSheet().then((data) => {
+    if (!data) {
+      statusEl.textContent = "not connected";
+      valuesEl.textContent = "Connect the sheet to see live values here.";
+      postsEl.textContent = "—";
+      return;
+    }
+    statusEl.textContent = "● connected";
+    statusEl.className = "font-mono text-[11px] uppercase tracking-[0.12em] text-accent";
+
+    const s = data.settings;
+    const rows = Object.keys(s).length
+      ? Object.entries(s)
+          .map(
+            ([k, v]) =>
+              '<div class="flex gap-4 py-2 border-b border-rule"><span class="font-mono text-[11px] uppercase tracking-[0.1em] text-ink-faint w-32 shrink-0">' +
+              esc(k) + '</span><span class="text-ink">' + (esc(String(v)) || "—") + "</span></div>",
+          )
+          .join("")
+      : '<span class="text-ink-faint">settings tab is empty</span>';
+    valuesEl.innerHTML = rows;
+
+    if (!data.posts.length) {
+      postsEl.innerHTML = '<span class="text-ink-faint">no posts in the sheet yet</span>';
+      return;
+    }
+    postsEl.innerHTML = data.posts
+      .slice()
+      .sort((a, b) => (a.date < b.date ? 1 : -1))
+      .map(
+        (p) =>
+          '<div class="flex items-baseline gap-4 py-2 border-b border-rule">' +
+          '<span class="font-mono text-[11px] text-ink-faint tabular w-24 shrink-0">' + esc(fmtDate(p.date)) + "</span>" +
+          '<a href="/blog?p=' + encodeURIComponent(p.slug) + '" class="text-ink hover:text-ink-faint transition-colors flex-1">' + esc(p.title) + "</a>" +
+          (p.draft ? '<span class="font-mono text-[10px] uppercase tracking-[0.1em] text-ink-faint border border-rule px-1.5">draft</span>' : "") +
+          "</div>",
+      )
+      .join("");
+  });
+</script>

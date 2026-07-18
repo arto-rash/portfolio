@@ -7,6 +7,7 @@ interface Props {
   description?: string;
   ogImage?: string;
   noLenis?: boolean;
+  noindex?: boolean;
 }
 
 const {
@@ -14,6 +15,7 @@ const {
   description = profile.tagline,
   ogImage = "/og-default.png",
   noLenis = false,
+  noindex = false,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://example.com").toString();
@@ -26,10 +28,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://example.com
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="theme-color" content="#f4f0e6" />
+    <meta name="theme-color" content="#ffffff" />
 
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
 
     <meta property="og:title" content={title} />
@@ -45,14 +48,14 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://example.com
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Hanken+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
     />
   </head>
 
   <body>
     <a
       href="#main"
-      class="sr-only focus:not-sr-only fixed left-3 top-3 z-50 bg-bg px-3 py-2 border border-rule-hi rounded font-mono text-xs"
+      class="sr-only focus:not-sr-only fixed left-3 top-3 z-50 bg-bg px-3 py-2 border border-ink font-mono text-xs"
       >skip to content</a
     >
 
@@ -113,50 +116,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://example.com
       document.addEventListener("astro:page-load", observe);
     </script>
 
-    <script>
-      // Magnetic hover – only on elements with .magnetic (CTAs)
-      const setup = () => {
-        document.querySelectorAll<HTMLElement>(".magnetic").forEach((el) => {
-          if (el.dataset.magneticBound) return;
-          el.dataset.magneticBound = "1";
-          const inner = el.querySelector<HTMLElement>(".magnetic-inner") ?? el;
-          const strength = Number(el.dataset.strength ?? 0.35);
-          const onMove = (e: PointerEvent) => {
-            const r = el.getBoundingClientRect();
-            const x = e.clientX - (r.left + r.width / 2);
-            const y = e.clientY - (r.top + r.height / 2);
-            inner.style.transform = `translate(${x * strength}px, ${y * strength}px)`;
-          };
-          const onLeave = () => {
-            inner.style.transform = "translate(0, 0)";
-          };
-          el.addEventListener("pointermove", onMove);
-          el.addEventListener("pointerleave", onLeave);
-        });
-      };
-      setup();
-      document.addEventListener("astro:page-load", setup);
-    </script>
-
-    <script>
-      // Hero spotlight – sets --mx/--my on [data-spotlight]
-      const bindSpotlight = () => {
-        document.querySelectorAll<HTMLElement>("[data-spotlight]").forEach((el) => {
-          if (el.dataset.spotBound) return;
-          el.dataset.spotBound = "1";
-          el.addEventListener("pointermove", (e) => {
-            const r = el.getBoundingClientRect();
-            el.style.setProperty("--mx", `${e.clientX - r.left}px`);
-            el.style.setProperty("--my", `${e.clientY - r.top}px`);
-          });
-        });
-      };
-      bindSpotlight();
-      document.addEventListener("astro:page-load", bindSpotlight);
-    </script>
-
     <script is:inline>
-      const s = "color:#1d4fff;font:600 13px ui-monospace,monospace";
+      const s = "color:#101010;font:600 13px ui-monospace,monospace";
       console.log("%chey. nice to meet you.", s);
     </script>
   </body>

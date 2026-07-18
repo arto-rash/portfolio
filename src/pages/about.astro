@@ -1,0 +1,137 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import profile from "../data/profile.json";
+import achievements from "../data/achievements.json";
+import music from "../data/music.json";
+
+function fmt(v: string) {
+  if (!v) return "";
+  if (/^\d{4}$/.test(v)) return v;
+  return v.split("-")[0];
+}
+const range = (s: string, e: string, current: boolean) =>
+  `${fmt(s)} – ${current ? "now" : fmt(e)}`;
+---
+
+<Layout title={`About – ${profile.name}`} description={profile.tagline}>
+  <Nav showHome />
+  <main id="main" class="pt-32 md:pt-40 pb-24 px-5 md:px-8">
+    <div class="mx-auto max-w-4xl">
+      {/* Bio */}
+      <section class="pb-16 md:pb-20">
+        <h1 class="font-display font-semibold tracking-[-0.03em] leading-[1] text-[clamp(36px,5.5vw,60px)]" data-reveal>
+          {profile.name}
+        </h1>
+        <p class="mt-6 text-[16px] md:text-[17px] leading-[1.7] text-ink-soft max-w-[54ch]" data-reveal style="--reveal-delay:80ms">
+          {profile.intro}
+        </p>
+      </section>
+
+      {/* Experience */}
+      <section class="pb-14" data-reveal>
+        <div class="border-b border-rule pb-4"><h2 class="eyebrow">experience</h2></div>
+        <ul>
+          {profile.experience.map((job) => (
+            <li class="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-4 border-b border-rule">
+              <span class="font-mono text-[11px] text-ink-faint tabular w-28 shrink-0">
+                {range(job.start, job.end, job.current)}
+              </span>
+              <span class="text-[15px] font-medium">{job.role}</span>
+              <span class="text-[14px] text-ink-faint">· {job.company}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Education */}
+      <section class="pb-14" data-reveal>
+        <div class="border-b border-rule pb-4"><h2 class="eyebrow">education</h2></div>
+        <ul>
+          {profile.education.map((ed) => (
+            <li class="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-4 border-b border-rule">
+              <span class="font-mono text-[11px] text-ink-faint tabular w-28 shrink-0">
+                {range(ed.start, ed.end, ed.current)}
+              </span>
+              <span class="text-[15px] font-medium">{ed.degree}</span>
+              <span class="text-[14px] text-ink-faint">· {ed.school}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Toolkit */}
+      <section class="pb-14" data-reveal>
+        <div class="border-b border-rule pb-4"><h2 class="eyebrow">toolkit</h2></div>
+        <ul>
+          {profile.skillGroups.map((g) => (
+            <li class="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-4 border-b border-rule">
+              <span class="font-mono text-[11px] uppercase tracking-[0.1em] text-ink-faint w-28 shrink-0">{g.label}</span>
+              <span class="flex-1 font-mono text-[12.5px] text-ink-soft leading-[1.8]">{g.items.join(" · ")}</span>
+            </li>
+          ))}
+          <li class="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-4 border-b border-rule">
+            <span class="font-mono text-[11px] uppercase tracking-[0.1em] text-ink-faint w-28 shrink-0">languages</span>
+            <span class="flex-1 font-mono text-[12.5px] text-ink-soft">
+              {profile.languages.map((l) => `${l.name} (${l.level.toLowerCase()})`).join(" · ")}
+            </span>
+          </li>
+        </ul>
+      </section>
+
+      {/* Milestones */}
+      <section class="pb-14" data-reveal>
+        <div class="border-b border-rule pb-4"><h2 class="eyebrow">milestones</h2></div>
+        <ul>
+          {achievements.map((a) => (
+            <li class="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-4 border-b border-rule">
+              <span class="font-mono text-[11px] text-ink-faint tabular w-28 shrink-0">{a.when}</span>
+              <span class="text-[15px] font-medium">{a.title}</span>
+              {a.highlight && <span class="text-[14px] text-ink-faint">· {a.highlight}</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Off the clock */}
+      <section class="pb-10" data-reveal>
+        <div class="border-b border-rule pb-4 mb-6"><h2 class="eyebrow">off the clock</h2></div>
+        <p class="text-[15px] leading-[1.7] text-ink-soft max-w-[54ch]">{music.intro}</p>
+        <p class="mt-6 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint">
+          song of the day · <span id="sotd-title" class="text-ink">{music.songOfTheDay.title}</span> — <span id="sotd-artist">{music.songOfTheDay.artist}</span><a
+            id="sotd-link"
+            href={music.songOfTheDay.url || "#"}
+            target="_blank"
+            rel="noreferrer"
+            class="link-arrow hover:text-ink transition-colors ml-3"
+            style={music.songOfTheDay.url ? undefined : "display:none"}
+          ><span>listen</span><span class="arrow">↗</span></a>
+        </p>
+      </section>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  // Live song-of-the-day override from the Google Sheet.
+  import { loadSheet } from "../lib/sheet";
+  loadSheet().then((data) => {
+    if (!data) return;
+    const s = data.settings;
+    const title = document.getElementById("sotd-title");
+    const artist = document.getElementById("sotd-artist");
+    const link = document.getElementById("sotd-link") as HTMLAnchorElement | null;
+    if (title && s.songTitle) title.textContent = s.songTitle;
+    if (artist && s.songArtist) artist.textContent = s.songArtist;
+    if (link) {
+      if (s.songUrl) {
+        link.href = s.songUrl;
+        link.style.display = "";
+      } else {
+        link.style.display = "none";
+      }
+    }
+  });
+</script>

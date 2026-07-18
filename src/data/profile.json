@@ -8,8 +8,8 @@
   "available": true,
   "availableFor": "freelance & full-time",
   "photo": "/selfie.jpeg",
-  "tagline": "Full-stack engineer, ex-robotics mentor, occasional bassist. Based in Baku.",
-  "intro": "I'm a full-stack web developer in Baku. Right now I build internal systems and landing pages at Megasec, freelance on CRMs, Shopify apps, and automation on the side, and study Computer Science at ADA. Before the web pulled me in, I spent two years teaching robotics, programming, and electronics to kids and coaching competition teams – still the best way I know to actually learn something: explain it to a twelve-year-old until it works. I write across the stack – React/Next and Astro up front, Laravel/Node with Mongo and MySQL behind – and there's usually an ESP32 and a soldering iron somewhere on the desk.",
+  "tagline": "Building at Megasec, freelancing on CRMs and Shopify apps, studying CS at ADA. Ex-robotics mentor, occasional bassist. Baku.",
+  "intro": "Full-stack web developer in Baku. I build internal systems and landing pages at Megasec, freelance on CRMs and Shopify apps, and study Computer Science at ADA. Before the web, I spent two years teaching kids robotics and electronics – there's still an ESP32 and a soldering iron somewhere on the desk.",
   "stack": [
     "TypeScript",
     "React",

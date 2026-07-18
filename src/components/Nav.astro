@@ -8,46 +8,23 @@ const { showHome = false } = Astro.props;
 ---
 
 <header
-  class="fixed inset-x-0 top-0 z-40 backdrop-blur-md bg-bg/70 border-b border-rule"
+  class="fixed inset-x-0 top-0 z-40 backdrop-blur-md bg-bg/80 border-b border-rule"
 >
-  <div class="mx-auto max-w-6xl px-5 md:px-8 h-14 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-2 group">
-      <span class="dot dot-pulse"></span>
-      <span class="font-mono text-[12px] tracking-[0.18em] uppercase text-ink-soft group-hover:text-ink transition-colors">
-        {profile.shortName}.{profile.lastName}
-      </span>
+  <div class="mx-auto max-w-4xl px-5 md:px-8 h-14 flex items-center justify-between">
+    <a href="/" class="font-mono text-[11px] tracking-[0.16em] uppercase text-ink">
+      {profile.shortName}.{profile.lastName}
     </a>
 
-    <nav class="hidden md:flex items-center gap-6 font-mono text-[12px] tracking-[0.12em] uppercase text-ink-soft">
-      {showHome && <a href="/" class="hover:text-accent transition-colors">home</a>}
-      <a href={showHome ? "/#work" : "#work"} class="hover:text-accent transition-colors">work</a>
-      <a href={showHome ? "/#experience" : "#experience"} class="hover:text-accent transition-colors">experience</a>
-      <a href={showHome ? "/#achievements" : "#achievements"} class="hover:text-accent transition-colors">milestones</a>
-      <a href="/blog" class="hover:text-accent transition-colors">writing</a>
-      <a href={showHome ? "/#contact" : "#contact"} class="hover:text-accent transition-colors">contact</a>
+    <nav class="hidden sm:flex items-center gap-7 font-mono text-[11px] tracking-[0.12em] uppercase text-ink-faint">
+      <a href={showHome ? "/#work" : "#work"} class="hover:text-ink transition-colors">work</a>
+      <a href="/about" class="hover:text-ink transition-colors">about</a>
+      <a href="/blog" class="hover:text-ink transition-colors">writing</a>
+      <a href={showHome ? "/#contact" : "#contact"} class="hover:text-ink transition-colors">contact</a>
     </nav>
 
-    <a href="/blog" class="md:hidden font-mono text-[12px] uppercase tracking-[0.12em] text-ink-soft hover:text-accent transition-colors">
-      writing
-    </a>
-  </div>
-
-  {/* Scroll progress bar */}
-  <div class="absolute bottom-0 left-0 h-px w-full bg-transparent">
-    <div id="nav-progress" class="h-full bg-accent" style="width:0%"></div>
+    <nav class="sm:hidden flex items-center gap-5 font-mono text-[11px] tracking-[0.12em] uppercase text-ink-faint">
+      <a href="/about" class="hover:text-ink transition-colors">about</a>
+      <a href="/blog" class="hover:text-ink transition-colors">writing</a>
+    </nav>
   </div>
 </header>
-
-<script>
-  const bar = document.getElementById("nav-progress");
-  if (bar) {
-    const onScroll = () => {
-      const h = document.documentElement;
-      const max = h.scrollHeight - h.clientHeight;
-      const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
-      bar.style.width = pct.toFixed(2) + "%";
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-  }
-</script>

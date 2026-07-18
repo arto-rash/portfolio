@@ -107,6 +107,7 @@ async function fetchScreenshot(slug: string, url: string): Promise<string | null
     if (!res.ok) return null;
     const ct = res.headers.get('content-type') ?? '';
     if (!ct.startsWith('image/')) return null;
+    if (ct.includes('gif')) return null; // thum.io serves its "generating…" placeholder as a GIF
     const buf = Buffer.from(await res.arrayBuffer());
     if (buf.byteLength < 2048) return null; // too small to be a real render
     return saveImage(buf, slug, extFromContentType(ct));

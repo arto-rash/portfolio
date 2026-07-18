@@ -4,6 +4,8 @@ import Nav from "../../components/Nav.astro";
 import Footer from "../../components/Footer.astro";
 import { getCollection } from "astro:content";
 
+// Static fallback: any MDX posts committed to the repo. When the Google Sheet is
+// connected, the client swaps this for the live list (and renders single posts).
 const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
@@ -23,49 +25,140 @@ function fmt(d: Date) {
 
 <Layout title="Writing – Artoghrul Rashid" description="Essays and notes on engineering craft, from the database up.">
   <Nav showHome />
-  <main id="main" class="pt-32 pb-24 px-5 md:px-8">
+  <main id="main" class="pt-32 md:pt-40 pb-24 px-5 md:px-8">
     <div class="mx-auto max-w-4xl">
-      <div class="eyebrow mb-4">writing</div>
-      <h1 class="font-display text-[58px] md:text-[92px] leading-[0.95] tracking-tight" data-reveal>
-        Notes from <span class="italic text-accent">the field</span>.
-      </h1>
-      <p class="mt-8 text-[17px] md:text-[19px] text-ink-soft max-w-[58ch]" data-reveal style="--reveal-delay:120ms">
-        Interesting things to share.
-      </p>
+      {/* Index view (list) */}
+      <div id="blog-index">
+        <div class="eyebrow mb-4">writing</div>
+        <h1 class="font-display font-semibold tracking-[-0.03em] text-[clamp(44px,8vw,84px)] leading-[0.98]" data-reveal>
+          Notes from the field
+        </h1>
+        <p class="mt-7 text-[16px] md:text-[17.5px] leading-[1.7] text-ink-soft max-w-[58ch]" data-reveal style="--reveal-delay:120ms">
+          Interesting things to share.
+        </p>
 
-      <div class="mt-20 space-y-16">
-        {years.length === 0 ? (
-          <p class="text-ink-soft">Nothing here yet.</p>
-        ) : years.map((y) => (
-          <section data-reveal>
-            <div class="flex items-baseline justify-between mb-6">
-              <h2 class="font-display text-[28px] text-ink-faint">{y}</h2>
-              <span class="eyebrow">{byYear[y].length} {byYear[y].length === 1 ? "post" : "posts"}</span>
-            </div>
-            <ul class="divide-y divide-rule border-y border-rule">
-              {byYear[y].map((p) => (
-                <li>
-                  <a href={`/blog/${p.id}`} class="group grid grid-cols-12 gap-x-6 gap-y-2 py-6 items-baseline">
-                    <div class="col-span-3 md:col-span-2 font-mono text-[12px] text-ink-faint tabular">
-                      {fmt(p.data.date)}
-                    </div>
-                    <div class="col-span-9 md:col-span-7">
-                      <h3 class="font-display text-[24px] md:text-[30px] leading-[1.12] group-hover:text-accent transition-colors">
-                        {p.data.title}
-                      </h3>
-                      <p class="mt-1 text-[14.5px] text-ink-soft max-w-[60ch]">{p.data.excerpt}</p>
-                    </div>
-                    <div class="col-span-12 md:col-span-3 md:text-right font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint">
-                      {p.data.tags.slice(0, 2).join(" · ")}
-                    </div>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
+        {/* Live list from the sheet (filled client-side) */}
+        <ul id="blog-live" class="mt-16 border-t border-rule" hidden></ul>
+        <p id="blog-loading" class="mt-16 text-ink-faint text-[14px]" hidden>Loading posts…</p>
+
+        {/* Static fallback list */}
+        <div id="blog-fallback" class="mt-16 space-y-16">
+          {years.length === 0 ? (
+            <p class="text-ink-soft">Nothing here yet.</p>
+          ) : years.map((y) => (
+            <section data-reveal>
+              <div class="flex items-baseline justify-between border-b border-rule pb-4 mb-2">
+                <h2 class="font-display font-medium tracking-[-0.01em] text-[22px] text-ink-faint tabular">{y}</h2>
+                <span class="eyebrow">{byYear[y].length} {byYear[y].length === 1 ? "post" : "posts"}</span>
+              </div>
+              <ul>
+                {byYear[y].map((p) => (
+                  <li class="border-b border-rule">
+                    <a href={`/blog/${p.id}`} class="work-row group grid grid-cols-12 gap-x-6 gap-y-2 py-6 items-baseline">
+                      <div class="col-span-3 md:col-span-2 font-mono text-[11.5px] text-ink-faint tabular">
+                        {fmt(p.data.date)}
+                      </div>
+                      <div class="col-span-9 md:col-span-7">
+                        <h3 class="work-title font-display font-medium tracking-[-0.01em] text-[21px] md:text-[26px] leading-[1.15]">
+                          {p.data.title}
+                        </h3>
+                        <p class="mt-1 text-[14px] text-ink-soft max-w-[60ch]">{p.data.excerpt}</p>
+                      </div>
+                      <div class="col-span-12 md:col-span-3 md:text-right font-mono text-[10.5px] uppercase tracking-[0.14em] text-ink-faint">
+                        {p.data.tags.slice(0, 2).join(" · ")}
+                      </div>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
       </div>
+
+      {/* Reader view (single post, rendered client-side) */}
+      <article id="blog-reader" class="max-w-2xl mx-auto" hidden></article>
     </div>
   </main>
   <Footer />
 </Layout>
+
+<script>
+  import { loadSheet, mdToHtml, fmtDate } from "../../lib/sheet";
+
+  const esc = (s: string) =>
+    String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+  const indexEl = document.getElementById("blog-index")!;
+  const liveEl = document.getElementById("blog-live") as HTMLUListElement;
+  const loadingEl = document.getElementById("blog-loading")!;
+  const fallbackEl = document.getElementById("blog-fallback")!;
+  const readerEl = document.getElementById("blog-reader")!;
+
+  const slug = new URLSearchParams(location.search).get("p");
+
+  function rowHtml(p: any) {
+    return (
+      '<li class="border-b border-rule">' +
+      '<a href="/blog?p=' + encodeURIComponent(p.slug) + '" class="work-row group grid grid-cols-12 gap-x-6 gap-y-2 py-6 items-baseline">' +
+      '<div class="col-span-3 md:col-span-2 font-mono text-[11.5px] text-ink-faint tabular">' + esc(fmtDate(p.date)) + "</div>" +
+      '<div class="col-span-9 md:col-span-7">' +
+      '<h3 class="work-title font-display font-medium tracking-[-0.01em] text-[21px] md:text-[26px] leading-[1.15]">' + esc(p.title) + "</h3>" +
+      (p.excerpt ? '<p class="mt-1 text-[14px] text-ink-soft max-w-[60ch]">' + esc(p.excerpt) + "</p>" : "") +
+      "</div>" +
+      '<div class="col-span-12 md:col-span-3 md:text-right font-mono text-[10.5px] uppercase tracking-[0.14em] text-ink-faint">' +
+      esc(p.tags.slice(0, 2).join(" · ")) + "</div>" +
+      "</a></li>"
+    );
+  }
+
+  function renderReader(p: any) {
+    indexEl.hidden = true;
+    readerEl.hidden = false;
+    document.title = p.title + " – Artoghrul Rashid";
+    const meta =
+      '<span>' + esc(fmtDate(p.date)) + "</span>" +
+      (p.tags.length ? '<span class="text-ink-dim">·</span><span>' + esc(p.tags.join(" · ")) + "</span>" : "");
+    readerEl.innerHTML =
+      '<a href="/blog" class="link-arrow font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:text-ink transition-colors"><span class="arrow">←</span><span>all posts</span></a>' +
+      '<header class="mt-10 mb-12">' +
+      '<div class="flex flex-wrap items-center gap-3 eyebrow mb-5">' + meta + "</div>" +
+      '<h1 class="font-display font-semibold tracking-[-0.03em] text-[clamp(36px,6vw,58px)] leading-[1.05]">' + esc(p.title) + "</h1>" +
+      (p.excerpt ? '<p class="mt-6 text-[16.5px] leading-[1.65] text-ink-soft max-w-[58ch]">' + esc(p.excerpt) + "</p>" : "") +
+      "</header>" +
+      '<div class="prose">' + mdToHtml(p.body) + "</div>" +
+      '<hr class="my-16" />' +
+      '<div class="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint">' +
+      '<a href="/blog" class="link-arrow hover:text-ink transition-colors"><span class="arrow">←</span><span>all posts</span></a>' +
+      '<a href="/#contact" class="link-arrow hover:text-ink transition-colors"><span>say hi</span><span class="arrow">→</span></a>' +
+      "</div>";
+    window.scrollTo(0, 0);
+  }
+
+  if (slug) loadingEl.hidden = false;
+
+  loadSheet().then((data) => {
+    loadingEl.hidden = true;
+    if (!data) {
+      // No sheet connected: if a ?p= was requested we can't resolve it — show the list.
+      return;
+    }
+    const published = data.posts.filter((p) => !p.draft);
+
+    if (slug) {
+      const post = data.posts.find((p) => p.slug === slug);
+      if (post) {
+        renderReader(post);
+        return;
+      }
+      // fall through to the list if the slug isn't found
+    }
+
+    if (published.length) {
+      const sorted = published.slice().sort((a, b) => (a.date < b.date ? 1 : -1));
+      liveEl.innerHTML = sorted.map(rowHtml).join("");
+      liveEl.hidden = false;
+      fallbackEl.hidden = true;
+    }
+  });
+</script>

@@ -26,12 +26,12 @@ const fmt = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "long", ye
   <main id="main" class="pt-32 pb-24 px-5 md:px-8">
     <article class="mx-auto max-w-2xl">
       {/* Back link */}
-      <a href="/blog" class="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:text-accent transition-colors link-arrow">
+      <a href="/blog" class="link-arrow font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:text-ink transition-colors">
         <span class="arrow">←</span><span>all posts</span>
       </a>
 
       <header class="mt-10 mb-12">
-        <div class="flex items-center gap-3 eyebrow mb-5">
+        <div class="flex flex-wrap items-center gap-3 eyebrow mb-5">
           <span>{fmt}</span>
           <span class="text-ink-dim">·</span>
           <span>{readMin} min read</span>
@@ -42,10 +42,10 @@ const fmt = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "long", ye
             </>
           )}
         </div>
-        <h1 class="font-display text-[44px] md:text-[64px] leading-[1.02] tracking-tight" data-reveal>
+        <h1 class="font-display font-semibold tracking-[-0.03em] text-[clamp(36px,6vw,58px)] leading-[1.05]" data-reveal>
           {post.data.title}
         </h1>
-        <p class="mt-6 text-[18px] text-ink-soft max-w-[58ch]" data-reveal style="--reveal-delay:100ms">
+        <p class="mt-6 text-[16.5px] leading-[1.65] text-ink-soft max-w-[58ch]" data-reveal style="--reveal-delay:100ms">
           {post.data.excerpt}
         </p>
       </header>
@@ -54,7 +54,7 @@ const fmt = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "long", ye
         <img
           src={post.data.cover}
           alt={post.data.title}
-          class="w-full rounded-[3px] border border-rule mb-12"
+          class="w-full border border-rule mb-12"
           data-reveal
         />
       )}
@@ -66,10 +66,10 @@ const fmt = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "long", ye
       <hr class="my-16" />
 
       <div class="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint">
-        <a href="/blog" class="link-arrow hover:text-accent transition-colors">
+        <a href="/blog" class="link-arrow hover:text-ink transition-colors">
           <span class="arrow">←</span><span>all posts</span>
         </a>
-        <a href="/#contact" class="link-arrow hover:text-accent transition-colors">
+        <a href="/#contact" class="link-arrow hover:text-ink transition-colors">
           <span>say hi</span><span class="arrow">→</span>
         </a>
       </div>

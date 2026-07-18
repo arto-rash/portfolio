@@ -1,28 +1,136 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Nav from "../components/Nav.astro";
-import Hero from "../components/Hero.astro";
-import Projects from "../components/Projects.astro";
-import Experience from "../components/Experience.astro";
-import Skills from "../components/Skills.astro";
-import Achievements from "../components/Achievements.astro";
-import Music from "../components/Music.astro";
-import BlogTeaser from "../components/BlogTeaser.astro";
-import Contact from "../components/Contact.astro";
 import Footer from "../components/Footer.astro";
+import profile from "../data/profile.json";
+import projects from "../data/projects.json";
+
+const socials = [
+  { label: "github", href: profile.social.github },
+  { label: "linkedin", href: profile.social.linkedin },
+].filter((s) => s.href && !s.href.endsWith("/"));
 ---
 
 <Layout>
   <Nav />
-  <main id="main">
-    <Hero />
-    <Projects />
-    <Experience />
-    <Skills />
-    <Achievements />
-    <Music />
-    <BlogTeaser />
-    <Contact />
+  <main id="main" class="px-5 md:px-8">
+    <div class="mx-auto max-w-4xl">
+      {/* Hero */}
+      <section class="pt-36 md:pt-48 pb-20 md:pb-28">
+        <div class="grid grid-cols-12 gap-x-8 gap-y-10 items-start">
+          <div class="col-span-12 md:col-span-8">
+            <div
+              id="availability"
+              class="eyebrow mb-8"
+              data-reveal
+              style={profile.available ? undefined : "display:none"}
+            >available for {profile.availableFor}</div>
+
+            <h1
+              class="font-display font-semibold tracking-[-0.03em] leading-[1] text-[clamp(40px,7vw,84px)]"
+              data-reveal
+              style="--reveal-delay:60ms"
+            >
+              Full-stack engineer.
+            </h1>
+
+            <p class="mt-6 text-[16px] md:text-[17.5px] leading-[1.7] text-ink-soft max-w-[48ch]" data-reveal style="--reveal-delay:140ms">
+              {profile.tagline}
+            </p>
+
+            <div class="mt-10 flex flex-wrap items-center gap-x-7 gap-y-3" data-reveal style="--reveal-delay:220ms">
+              <a href="/about" class="link-arrow font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:text-ink transition-colors">
+                <span>about</span><span class="arrow">→</span>
+              </a>
+              <a href="/blog" class="link-arrow font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:text-ink transition-colors">
+                <span>writing</span><span class="arrow">→</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-span-12 md:col-span-4 flex md:justify-end" data-reveal style="--reveal-delay:120ms">
+            {profile.photo && (
+              <img
+                src={profile.photo}
+                alt={`${profile.name} portrait`}
+                class="w-[160px] md:w-[200px] aspect-[3/4] object-cover border border-rule"
+                loading="eager"
+                onerror="this.style.display='none'"
+              />
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Work */}
+      <section id="work" class="pb-24 md:pb-32">
+        <div class="flex items-baseline justify-between border-b border-rule pb-4" data-reveal>
+          <h2 class="eyebrow">work</h2>
+          <span class="eyebrow tabular">{String(projects.length).padStart(2, "0")}</span>
+        </div>
+        <ul>
+          {projects.map((p, i) => (
+            <li class="border-b border-rule">
+              <a href={`/work/${p.slug}`} class="work-row group flex items-baseline gap-4 py-5">
+                <span class="font-mono text-[11px] text-ink-faint tabular shrink-0">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <h3 class="work-title font-display font-medium tracking-[-0.01em] text-[19px] md:text-[23px] leading-[1.15] shrink-0">
+                  {p.title}
+                </h3>
+                <span class="hidden sm:block flex-1 text-right text-[13px] text-ink-faint truncate">
+                  {p.tagline}
+                </span>
+                <span class="arrow font-mono text-ink-dim group-hover:text-ink transition-colors shrink-0">↗</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Contact */}
+      <section id="contact" class="pb-28 md:pb-36">
+        <div class="border-b border-rule pb-4 mb-10" data-reveal>
+          <h2 class="eyebrow">contact</h2>
+        </div>
+        <a
+          href={`mailto:${profile.social.email}`}
+          class="link-arrow font-display font-semibold tracking-[-0.02em] text-[clamp(22px,4vw,40px)] leading-[1.1] hover:text-ink-faint transition-colors"
+          data-reveal
+        >
+          <span>{profile.social.email}</span><span class="arrow">→</span>
+        </a>
+        <ul class="mt-8 flex flex-wrap gap-x-7 gap-y-2 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint" data-reveal style="--reveal-delay:100ms">
+          {socials.map((s) => (
+            <li>
+              <a href={s.href} target="_blank" rel="noreferrer" class="link-arrow hover:text-ink transition-colors">
+                <span>{s.label}</span><span class="arrow">↗</span>
+              </a>
+            </li>
+          ))}
+          <li>
+            <a
+              href={`tel:${profile.social.phone.replace(/[^+\d]/g, "")}`}
+              class="hover:text-ink transition-colors"
+            >{profile.social.phone}</a>
+          </li>
+        </ul>
+      </section>
+    </div>
   </main>
   <Footer />
 </Layout>
+
+<script>
+  // Live override from the Google Sheet (falls back to static content if unset).
+  import { loadSheet } from "../lib/sheet";
+  loadSheet().then((data) => {
+    if (!data) return;
+    const s = data.settings;
+    const el = document.getElementById("availability");
+    if (!el || !("available" in s)) return;
+    const on = String(s.available).toLowerCase() === "true";
+    el.style.display = on ? "" : "none";
+    if (on && s.availableFor) el.textContent = `available for ${s.availableFor}`;
+  });
+</script>
