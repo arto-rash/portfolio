@@ -30,7 +30,7 @@
     "url": "https://farida-ai-frontend.vercel.app/",
     "links": [
       { "label": "App", "url": "https://farida-ai-frontend.vercel.app/" },
-      { "label": "Landing", "url": "https://farida-ai-landing.app/" }
+      { "label": "Landing", "url": "https://farida-ai-landing.vercel.app/" }
     ],
     "image": "",
     "screenshots": [],

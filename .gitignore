@@ -7,9 +7,6 @@ dist/
 # og:image fetch cache
 .cache/
 
-# auto-downloaded og:images
-public/og/
-
 # dependencies
 node_modules/
 

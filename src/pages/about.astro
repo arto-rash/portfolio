@@ -98,16 +98,6 @@ const range = (s: string, e: string, current: boolean) =>
       <section class="pb-10" data-reveal>
         <div class="border-b border-rule pb-4 mb-6"><h2 class="eyebrow">off the clock</h2></div>
         <p class="text-[15px] leading-[1.7] text-ink-soft max-w-[54ch]">{music.intro}</p>
-        <p class="mt-6 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint">
-          song of the day · <span id="sotd-title" class="text-ink">{music.songOfTheDay.title}</span> — <span id="sotd-artist">{music.songOfTheDay.artist}</span><a
-            id="sotd-link"
-            href={music.songOfTheDay.url || "#"}
-            target="_blank"
-            rel="noreferrer"
-            class="link-arrow hover:text-ink transition-colors ml-3"
-            style={music.songOfTheDay.url ? undefined : "display:none"}
-          ><span>listen</span><span class="arrow">↗</span></a>
-        </p>
       </section>
     </div>
   </main>
@@ -115,24 +105,10 @@ const range = (s: string, e: string, current: boolean) =>
 </Layout>
 
 <script>
-  // Live song-of-the-day override from the Google Sheet.
+  // Live experience override from the Google Sheet.
   import { loadSheet } from "../lib/sheet";
   loadSheet().then((data) => {
     if (!data) return;
-    const s = data.settings;
-    const title = document.getElementById("sotd-title");
-    const artist = document.getElementById("sotd-artist");
-    const link = document.getElementById("sotd-link") as HTMLAnchorElement | null;
-    if (title && s.songTitle) title.textContent = s.songTitle;
-    if (artist && s.songArtist) artist.textContent = s.songArtist;
-    if (link) {
-      if (s.songUrl) {
-        link.href = s.songUrl;
-        link.style.display = "";
-      } else {
-        link.style.display = "none";
-      }
-    }
 
     // Live experience override
     const exp = data.experience || [];

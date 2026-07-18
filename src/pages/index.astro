@@ -4,7 +4,9 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import profile from "../data/profile.json";
 import projects from "../data/projects.json";
+import music from "../data/music.json";
 
+const sotd = music.songOfTheDay;
 const socials = [
   { label: "github", href: profile.social.github },
   { label: "linkedin", href: profile.social.linkedin },
@@ -45,6 +47,17 @@ const socials = [
               <a href="/blog" class="link-arrow font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:text-ink transition-colors">
                 <span>writing</span><span class="arrow">→</span>
               </a>
+              {sotd.title && (
+                <a
+                  id="hero-sotd"
+                  href={sotd.url || "#"}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="song of the day"
+                  class="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:text-ink transition-colors"
+                  style={sotd.url ? undefined : "pointer-events:none"}
+                >♪&nbsp;<span id="hero-sotd-title">{sotd.title}</span></a>
+              )}
             </div>
           </div>
 
@@ -137,6 +150,19 @@ const socials = [
       const on = String(s.available).toLowerCase() === "true";
       el.style.display = on ? "" : "none";
       if (on && s.availableFor) el.textContent = `available for ${s.availableFor}`;
+    }
+
+    // song of the day (hero)
+    const sTitle = document.getElementById("hero-sotd-title");
+    const sLink = document.getElementById("hero-sotd") as HTMLAnchorElement | null;
+    if (sTitle && s.songTitle) sTitle.textContent = s.songTitle;
+    if (sLink) {
+      if (s.songUrl) {
+        sLink.href = s.songUrl;
+        sLink.style.pointerEvents = "";
+      } else {
+        sLink.style.pointerEvents = "none";
+      }
     }
 
     // work list — sheet projects replace the static list

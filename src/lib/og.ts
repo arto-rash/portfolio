@@ -116,6 +116,18 @@ async function fetchScreenshot(slug: string, url: string): Promise<string | null
   }
 }
 
+const OG_EXTS = ['png', 'jpg', 'jpeg', 'webp', 'avif'];
+
+// A screenshot already committed to public/og wins — makes builds deterministic
+// and offline-safe (fetched once locally, committed, then served by any host).
+function findExistingOg(slug: string): string | null {
+  for (const ext of OG_EXTS) {
+    const file = `${slug}.${ext}`;
+    if (existsSync(path.join(PUBLIC_DIR, file))) return file;
+  }
+  return null;
+}
+
 export async function resolveProjectImages<
   T extends { slug: string; image?: string; url?: string },
 >(projects: T[]): Promise<(T & { resolvedImage: string | null })[]> {
@@ -124,10 +136,13 @@ export async function resolveProjectImages<
 
   const results = await Promise.all(
     projects.map(async (p) => {
-      // 0. "none" opts out – use the branded gradient (good for no-UI backends)
+      // 0. "none" opts out – no image (good for no-UI backends)
       if (p.image?.trim() === 'none') return { ...p, resolvedImage: null };
       // 1. manual override always wins
       if (p.image && p.image.trim()) return { ...p, resolvedImage: p.image };
+      // 2. a committed on-disk screenshot wins next (deterministic host builds)
+      const onDisk = findExistingOg(p.slug);
+      if (onDisk) return { ...p, resolvedImage: `/og/${onDisk}` };
       if (!p.url) return { ...p, resolvedImage: null };
 
       // 2. fresh cache hit
