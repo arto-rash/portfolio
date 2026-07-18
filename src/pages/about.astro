@@ -17,10 +17,10 @@ const range = (s: string, e: string, current: boolean) =>
 
 <Layout title={`About – ${profile.name}`} description={profile.tagline}>
   <Nav showHome />
-  <main id="main" class="pt-32 md:pt-40 pb-24 px-5 md:px-8">
+  <main id="main" class="pt-28 md:pt-32 pb-16 px-5 md:px-8">
     <div class="mx-auto max-w-4xl">
       {/* Bio */}
-      <section class="pb-16 md:pb-20">
+      <section class="pb-10 md:pb-12">
         <h1 class="font-display font-semibold tracking-[-0.03em] leading-[1] text-[clamp(36px,5.5vw,60px)]" data-reveal>
           {profile.name}
         </h1>
@@ -30,9 +30,9 @@ const range = (s: string, e: string, current: boolean) =>
       </section>
 
       {/* Experience */}
-      <section class="pb-14" data-reveal>
+      <section class="pb-10" data-reveal>
         <div class="border-b border-rule pb-4"><h2 class="eyebrow">experience</h2></div>
-        <ul>
+        <ul id="exp-list">
           {profile.experience.map((job) => (
             <li class="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-4 border-b border-rule">
               <span class="font-mono text-[11px] text-ink-faint tabular w-28 shrink-0">
@@ -46,7 +46,7 @@ const range = (s: string, e: string, current: boolean) =>
       </section>
 
       {/* Education */}
-      <section class="pb-14" data-reveal>
+      <section class="pb-10" data-reveal>
         <div class="border-b border-rule pb-4"><h2 class="eyebrow">education</h2></div>
         <ul>
           {profile.education.map((ed) => (
@@ -62,7 +62,7 @@ const range = (s: string, e: string, current: boolean) =>
       </section>
 
       {/* Toolkit */}
-      <section class="pb-14" data-reveal>
+      <section class="pb-10" data-reveal>
         <div class="border-b border-rule pb-4"><h2 class="eyebrow">toolkit</h2></div>
         <ul>
           {profile.skillGroups.map((g) => (
@@ -81,7 +81,7 @@ const range = (s: string, e: string, current: boolean) =>
       </section>
 
       {/* Milestones */}
-      <section class="pb-14" data-reveal>
+      <section class="pb-10" data-reveal>
         <div class="border-b border-rule pb-4"><h2 class="eyebrow">milestones</h2></div>
         <ul>
           {achievements.map((a) => (
@@ -132,6 +132,32 @@ const range = (s: string, e: string, current: boolean) =>
       } else {
         link.style.display = "none";
       }
+    }
+
+    // Live experience override
+    const exp = data.experience || [];
+    const expList = document.getElementById("exp-list");
+    if (exp.length && expList) {
+      const esc = (v: string) =>
+        String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const fyear = (v: string) => {
+        if (!v) return "";
+        const t = String(v);
+        return /^\d{4}$/.test(t) ? t : t.split("-")[0];
+      };
+      const range = (j: any) => `${fyear(j.start)} – ${j.current ? "now" : fyear(j.end)}`;
+      expList.innerHTML = exp
+        .slice()
+        .sort((a: any, b: any) => (String(a.start) < String(b.start) ? 1 : -1))
+        .map(
+          (j: any) =>
+            '<li class="flex flex-wrap items-baseline gap-x-4 gap-y-1 py-4 border-b border-rule">' +
+            '<span class="font-mono text-[11px] text-ink-faint tabular w-28 shrink-0">' + esc(range(j)) + "</span>" +
+            '<span class="text-[15px] font-medium">' + esc(j.role) + "</span>" +
+            '<span class="text-[14px] text-ink-faint">· ' + esc(j.company) + "</span>" +
+            "</li>",
+        )
+        .join("");
     }
   });
 </script>

@@ -1,5 +1,43 @@
 [
   {
+    "slug": "fermachi",
+    "title": "Fermachi",
+    "tagline": "Azerbaijan's marketplace for farm machinery, services & produce.",
+    "role": "full-stack",
+    "status": "live",
+    "description": "A trilingual agricultural marketplace where anyone can rent out farm machinery, hire field services, and buy or sell produce from a single account.",
+    "longDescription": "Fermachi lets Azerbaijani farmers and providers list and book agricultural machinery, field services, and goods through one unified account – with a server-enforced booking flow, escrow-style payments and platform commission, bidirectional reviews, real-time chat and notifications, and an AI assistant. It's built as a four-part polyrepo: a Laravel 11 REST + WebSocket API on PostgreSQL, a Next.js 16 app dashboard, a Next.js marketing site, and an Expo / React Native mobile client shipping soon.",
+    "stack": ["Laravel", "PostgreSQL", "Next.js", "React", "TypeScript", "Expo", "Reverb"],
+    "url": "https://fermachi.com/",
+    "links": [
+      { "label": "Landing", "url": "https://fermachi.com/" },
+      { "label": "App", "url": "https://app.fermachi.com/" }
+    ],
+    "image": "",
+    "screenshots": [],
+    "accent": "#2f9e44",
+    "featured": true
+  },
+  {
+    "slug": "portfelim",
+    "title": "Portfelim",
+    "tagline": "Turn teaching material into AI exams in minutes.",
+    "role": "full-stack",
+    "status": "live",
+    "description": "A multilingual, credit-based platform that turns a teacher's photos, PDFs or slides into editable AI-generated exams, quizzes and answer keys – with AI grading and PDF/DOCX export.",
+    "longDescription": "Teachers upload material, pick question types, difficulty and language, and a multimodal LLM returns a strict-JSON exam plus answer key they edit in a rich TipTap/KaTeX editor before exporting to PDF or DOCX; the same AI grades open-ended answers and generates study materials. Built as a Laravel 13 API (Sanctum, PostgreSQL, queued jobs) with two Next.js 16 front-ends – the app and a separate marketing site.",
+    "stack": ["Laravel", "PostgreSQL", "Next.js", "React", "TypeScript", "OpenRouter"],
+    "url": "https://farida-ai-frontend.vercel.app/",
+    "links": [
+      { "label": "App", "url": "https://farida-ai-frontend.vercel.app/" },
+      { "label": "Landing", "url": "https://farida-ai-landing.app/" }
+    ],
+    "image": "",
+    "screenshots": [],
+    "accent": "#6741d9",
+    "featured": true
+  },
+  {
     "slug": "youcansupport",
     "title": "YouCanSupport",
     "tagline": "A help-center platform businesses publish on their own domain.",

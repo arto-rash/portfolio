@@ -14,9 +14,37 @@ export interface SheetPost {
   body: string;
 }
 
+export interface SheetExperience {
+  row: number | null;
+  role: string;
+  company: string;
+  location: string;
+  start: string;
+  end: string;
+  current: boolean;
+  description: string;
+}
+
+export interface SheetProject {
+  slug: string;
+  title: string;
+  tagline: string;
+  role: string;
+  status: string;
+  description: string;
+  longDescription: string;
+  stack: string[];
+  url: string;
+  image: string;
+  accent: string;
+  featured: boolean;
+}
+
 export interface SheetData {
   settings: Record<string, string>;
   posts: SheetPost[];
+  experience: SheetExperience[];
+  projects: SheetProject[];
 }
 
 function isTrue(v: unknown): boolean {
@@ -68,7 +96,35 @@ export function loadSheet(): Promise<SheetData | null> {
           draft: isTrue(p.draft),
           body: String(p.body ?? ""),
         }));
-      return { settings, posts };
+      const experience: SheetExperience[] = (raw.experience ?? [])
+        .filter((x: any) => x && (x.role || x.company))
+        .map((x: any) => ({
+          row: x._row ?? null,
+          role: String(x.role ?? ""),
+          company: String(x.company ?? ""),
+          location: String(x.location ?? ""),
+          start: x.start == null ? "" : String(x.start),
+          end: x.end == null ? "" : String(x.end),
+          current: isTrue(x.current),
+          description: String(x.description ?? ""),
+        }));
+      const projects: SheetProject[] = (raw.projects ?? [])
+        .filter((p: any) => p && p.slug)
+        .map((p: any) => ({
+          slug: String(p.slug).trim(),
+          title: String(p.title ?? ""),
+          tagline: String(p.tagline ?? ""),
+          role: String(p.role ?? ""),
+          status: String(p.status ?? ""),
+          description: String(p.description ?? ""),
+          longDescription: String(p.longDescription ?? ""),
+          stack: parseTags(p.stack),
+          url: String(p.url ?? ""),
+          image: String(p.image ?? ""),
+          accent: String(p.accent ?? ""),
+          featured: isTrue(p.featured),
+        }));
+      return { settings, posts, experience, projects };
     })
     .catch(() => null);
   return cache;

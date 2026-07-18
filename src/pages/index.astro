@@ -16,12 +16,12 @@ const socials = [
   <main id="main" class="px-5 md:px-8">
     <div class="mx-auto max-w-4xl">
       {/* Hero */}
-      <section class="pt-36 md:pt-48 pb-20 md:pb-28">
-        <div class="grid grid-cols-12 gap-x-8 gap-y-10 items-start">
+      <section class="pt-28 md:pt-32 pb-12 md:pb-16">
+        <div class="grid grid-cols-12 gap-x-8 gap-y-8 items-start">
           <div class="col-span-12 md:col-span-8">
             <div
               id="availability"
-              class="eyebrow mb-8"
+              class="eyebrow mb-6"
               data-reveal
               style={profile.available ? undefined : "display:none"}
             >available for {profile.availableFor}</div>
@@ -38,7 +38,7 @@ const socials = [
               {profile.tagline}
             </p>
 
-            <div class="mt-10 flex flex-wrap items-center gap-x-7 gap-y-3" data-reveal style="--reveal-delay:220ms">
+            <div class="mt-8 flex flex-wrap items-center gap-x-7 gap-y-3" data-reveal style="--reveal-delay:220ms">
               <a href="/about" class="link-arrow font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:text-ink transition-colors">
                 <span>about</span><span class="arrow">→</span>
               </a>
@@ -63,15 +63,15 @@ const socials = [
       </section>
 
       {/* Work */}
-      <section id="work" class="pb-24 md:pb-32">
+      <section id="work" class="pb-16 md:pb-20">
         <div class="flex items-baseline justify-between border-b border-rule pb-4" data-reveal>
           <h2 class="eyebrow">work</h2>
-          <span class="eyebrow tabular">{String(projects.length).padStart(2, "0")}</span>
+          <span id="work-count" class="eyebrow tabular">{String(projects.length).padStart(2, "0")}</span>
         </div>
-        <ul>
+        <ul id="work-list">
           {projects.map((p, i) => (
             <li class="border-b border-rule">
-              <a href={`/work/${p.slug}`} class="work-row group flex items-baseline gap-4 py-5">
+              <a href={`/work/${p.slug}`} class="work-row group flex items-baseline gap-4 py-4">
                 <span class="font-mono text-[11px] text-ink-faint tabular shrink-0">
                   {String(i + 1).padStart(2, "0")}
                 </span>
@@ -89,8 +89,8 @@ const socials = [
       </section>
 
       {/* Contact */}
-      <section id="contact" class="pb-28 md:pb-36">
-        <div class="border-b border-rule pb-4 mb-10" data-reveal>
+      <section id="contact" class="pb-20 md:pb-24">
+        <div class="border-b border-rule pb-4 mb-8" data-reveal>
           <h2 class="eyebrow">contact</h2>
         </div>
         <a
@@ -124,13 +124,39 @@ const socials = [
 <script>
   // Live override from the Google Sheet (falls back to static content if unset).
   import { loadSheet } from "../lib/sheet";
+  const esc = (v: string) =>
+    String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
   loadSheet().then((data) => {
     if (!data) return;
-    const s = data.settings;
+
+    // availability
+    const s = data.settings || {};
     const el = document.getElementById("availability");
-    if (!el || !("available" in s)) return;
-    const on = String(s.available).toLowerCase() === "true";
-    el.style.display = on ? "" : "none";
-    if (on && s.availableFor) el.textContent = `available for ${s.availableFor}`;
+    if (el && "available" in s) {
+      const on = String(s.available).toLowerCase() === "true";
+      el.style.display = on ? "" : "none";
+      if (on && s.availableFor) el.textContent = `available for ${s.availableFor}`;
+    }
+
+    // work list — sheet projects replace the static list
+    const projects = data.projects || [];
+    const workList = document.getElementById("work-list");
+    if (projects.length && workList) {
+      workList.innerHTML = projects
+        .map(
+          (p, i) =>
+            '<li class="border-b border-rule">' +
+            '<a href="/work/?p=' + encodeURIComponent(p.slug) + '" class="work-row group flex items-baseline gap-4 py-4">' +
+            '<span class="font-mono text-[11px] text-ink-faint tabular shrink-0">' + String(i + 1).padStart(2, "0") + "</span>" +
+            '<h3 class="work-title font-display font-medium tracking-[-0.01em] text-[19px] md:text-[23px] leading-[1.15] shrink-0">' + esc(p.title) + "</h3>" +
+            '<span class="hidden sm:block flex-1 text-right text-[13px] text-ink-faint truncate">' + esc(p.tagline) + "</span>" +
+            '<span class="arrow font-mono text-ink-dim group-hover:text-ink transition-colors shrink-0">↗</span>' +
+            "</a></li>",
+        )
+        .join("");
+      const count = document.getElementById("work-count");
+      if (count) count.textContent = String(projects.length).padStart(2, "0");
+    }
   });
 </script>

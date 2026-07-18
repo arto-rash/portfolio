@@ -1,0 +1,67 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+---
+
+<Layout title="Work – Artoghrul Rashid" description="Project detail">
+  <Nav showHome />
+  <main id="main" class="pt-32 pb-24 px-5 md:px-8">
+    <article id="proj-view" class="mx-auto max-w-4xl">
+      <a href="/#work" class="link-arrow font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:text-ink transition-colors">
+        <span class="arrow">←</span><span>all work</span>
+      </a>
+      <p class="mt-10 text-ink-faint text-[14px]">Loading…</p>
+    </article>
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  import { loadSheet } from "../../lib/sheet";
+
+  const esc = (v: string) =>
+    String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+  const slug = new URLSearchParams(location.search).get("p");
+  const view = document.getElementById("proj-view")!;
+  const back =
+    '<a href="/#work" class="link-arrow font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:text-ink transition-colors"><span class="arrow">←</span><span>all work</span></a>';
+
+  loadSheet().then((data) => {
+    const p = (data?.projects || []).find((x) => x.slug === slug);
+    if (!p) {
+      view.innerHTML = back + '<p class="mt-10 text-ink-soft">Project not found.</p>';
+      return;
+    }
+    document.title = p.title + " – Artoghrul Rashid";
+
+    const statusEl = p.status
+      ? '<span' + (p.status === "live" ? ' class="text-accent"' : "") + ">" + esc(p.status) + "</span>"
+      : "";
+    const roleEl = p.role ? '<span class="text-ink-dim">·</span><span>' + esc(p.role) + "</span>" : "";
+    const link = p.url
+      ? '<a href="' + esc(p.url) + '" target="_blank" rel="noreferrer" class="btn btn-primary">Live ↗</a>'
+      : "";
+    const stackTags = (p.stack || [])
+      .map((t) => '<li class="tag">' + esc(t) + "</li>")
+      .join("");
+
+    view.innerHTML =
+      back +
+      '<header class="mt-10 mb-10">' +
+      '<div class="flex flex-wrap items-center gap-3 eyebrow mb-5">' + statusEl + roleEl + "</div>" +
+      '<h1 class="font-display font-semibold tracking-[-0.03em] text-[clamp(40px,7vw,76px)] leading-[1.02]">' + esc(p.title) + "</h1>" +
+      (p.tagline ? '<p class="mt-5 text-[17px] md:text-[20px] leading-[1.5] text-ink-soft max-w-[60ch]">' + esc(p.tagline) + "</p>" : "") +
+      (link ? '<div class="mt-8 flex flex-wrap gap-3">' + link + "</div>" : "") +
+      "</header>" +
+      '<div class="grid grid-cols-1 md:grid-cols-12 gap-x-10 gap-y-8">' +
+      '<div class="md:col-span-8"><p class="text-[16.5px] leading-[1.75] text-ink-soft">' + esc(p.longDescription || p.description || "") + "</p></div>" +
+      '<aside class="md:col-span-4 space-y-6">' +
+      (stackTags ? '<div><div class="eyebrow mb-2.5">stack</div><ul class="flex flex-wrap gap-2">' + stackTags + "</ul></div>" : "") +
+      (p.role ? '<div><div class="eyebrow mb-2.5">role</div><div class="font-mono text-[12.5px] text-ink-soft">' + esc(p.role) + "</div></div>" : "") +
+      "</aside>" +
+      "</div>";
+    window.scrollTo(0, 0);
+  });
+</script>

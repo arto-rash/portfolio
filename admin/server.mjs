@@ -109,7 +109,18 @@ let MOCK = {
       body: "# It works\n\nThis whole post lives in a **spreadsheet cell**.\n\n- Edit the sheet\n- Refresh\n- Done\n\n> No rebuild required.\n\n```js\nconsole.log('rendered client-side')\n```",
     },
   ],
+  experience: [
+    { _row: 2, role: "Full-stack Web Developer", company: "Megasec LLC", location: "Baku", start: "2025-06", end: "", current: true, description: "" },
+    { _row: 3, role: "Software Engineer", company: "Freelance", location: "Remote", start: "2023-12", end: "", current: true, description: "" },
+  ],
+  projects: [
+    { slug: "mock-project", title: "Mock Project", tagline: "A project served live from the sheet.", role: "full-stack", status: "live", stack: "Astro, TypeScript", url: "https://example.com", image: "", description: "Short.", longDescription: "A longer description rendered client-side on the /work detail page.", accent: "#e02d00", featured: true },
+  ],
 };
+
+function nextRow(list) {
+  return Math.max(1, ...list.map((e) => e._row || 0)) + 1;
+}
 
 function mockRespond(res, obj) {
   res.writeHead(200, {
@@ -230,6 +241,24 @@ createServer(async (req, res) => {
           else MOCK.posts.push(post);
         } else if (b.action === "deletePost") {
           MOCK.posts = MOCK.posts.filter((p) => String(p.slug) !== String(b.slug));
+        } else if (b.action === "saveExperience") {
+          const x = b.experience || {};
+          if (x._row) {
+            const i = MOCK.experience.findIndex((e) => e._row === x._row);
+            if (i >= 0) MOCK.experience[i] = { ...x };
+            else MOCK.experience.push({ ...x, _row: nextRow(MOCK.experience) });
+          } else {
+            MOCK.experience.push({ ...x, _row: nextRow(MOCK.experience) });
+          }
+        } else if (b.action === "deleteExperience") {
+          MOCK.experience = MOCK.experience.filter((e) => e._row !== b.row);
+        } else if (b.action === "saveProject") {
+          const pr = b.project || {};
+          const i = MOCK.projects.findIndex((x) => String(x.slug) === String(pr.slug));
+          if (i >= 0) MOCK.projects[i] = { ...pr };
+          else MOCK.projects.push({ ...pr });
+        } else if (b.action === "deleteProject") {
+          MOCK.projects = MOCK.projects.filter((x) => String(x.slug) !== String(b.slug));
         }
         return mockRespond(res, MOCK);
       }

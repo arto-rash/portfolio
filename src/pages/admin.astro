@@ -23,39 +23,73 @@ function doPost(e) {
   if (body.action === 'saveSettings') saveSettings(body.settings || {});
   else if (body.action === 'savePost') savePost(body.post || {});
   else if (body.action === 'deletePost') deletePost(body.slug);
+  else if (body.action === 'saveExperience') saveExperience(body.experience || {});
+  else if (body.action === 'deleteExperience') deleteExperience(body.row);
+  else if (body.action === 'saveProject') saveProject(body.project || {});
+  else if (body.action === 'deleteProject') deleteProject(body.slug);
 
   return json(readAll());
 }
 
 function readAll() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var out = { settings: {}, posts: [] };
+  var out = { settings: {}, posts: [], experience: [], projects: [] };
+
+  // settings: row 1 = headers, row 2 = values (one row of values)
   var s = ss.getSheetByName('settings');
-  if (s) s.getDataRange().getValues().slice(1).forEach(function (r) {
-    if (r[0]) out.settings[r[0]] = r[1];
-  });
+  if (s && s.getLastRow() >= 2) {
+    var sv = s.getDataRange().getValues();
+    var shead = sv[0], srow = sv[1];
+    shead.forEach(function (h, i) { if (h) out.settings[h] = srow[i]; });
+  }
+
+  // posts: row 1 = headers, one post per row after that
   var p = ss.getSheetByName('posts');
-  if (p) {
+  if (p && p.getLastRow() >= 2) {
     var rows = p.getDataRange().getValues();
-    var head = rows.shift();
+    var phead = rows.shift();
     rows.forEach(function (r) {
       var o = {};
-      head.forEach(function (h, i) { o[h] = r[i]; });
+      phead.forEach(function (h, i) { o[h] = r[i]; });
       if (o.slug) out.posts.push(o);
     });
   }
+
+  // experience: row 1 = headers, one per row after (_row = the sheet row)
+  var x = ss.getSheetByName('experience');
+  if (x && x.getLastRow() >= 2) {
+    var xv = x.getDataRange().getValues();
+    var xhead = xv[0];
+    for (var i = 1; i < xv.length; i++) {
+      var eo = { _row: i + 1 };
+      xhead.forEach(function (h, j) { if (h) eo[h] = xv[i][j]; });
+      if (eo.role || eo.company) out.experience.push(eo);
+    }
+  }
+
+  // projects: row 1 = headers, one per row after
+  var pr = ss.getSheetByName('projects');
+  if (pr && pr.getLastRow() >= 2) {
+    var prv = pr.getDataRange().getValues();
+    var prhead = prv.shift();
+    prv.forEach(function (r) {
+      var o = {};
+      prhead.forEach(function (h, i) { o[h] = r[i]; });
+      if (o.slug) out.projects.push(o);
+    });
+  }
+
   return out;
 }
 
 function saveSettings(obj) {
   var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('settings');
   if (!sh) return;
-  var values = sh.getDataRange().getValues();
-  var rowByKey = {};
-  for (var i = 1; i < values.length; i++) rowByKey[values[i][0]] = i + 1;
+  var head = sh.getLastColumn() ? sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0] : [];
   Object.keys(obj).forEach(function (k) {
-    if (rowByKey[k]) sh.getRange(rowByKey[k], 2).setValue(obj[k]);
-    else sh.appendRow([k, obj[k]]);
+    var col = head.indexOf(k);
+    if (col < 0) { head.push(k); col = head.length - 1; sh.getRange(1, col + 1).setValue(k); }
+    sh.getRange(2, col + 1).setValue(obj[k]); // value always on row 2
   });
 }
 
@@ -78,6 +112,50 @@ function savePost(post) {
 
 function deletePost(slug) {
   var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('posts');
+  if (!sh) return;
+  var data = sh.getDataRange().getValues();
+  var slugCol = data[0].indexOf('slug');
+  for (var i = data.length - 1; i >= 1; i--) {
+    if (String(data[i][slugCol]) === String(slug)) sh.deleteRow(i + 1);
+  }
+}
+
+function saveExperience(x) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName('experience') || ss.insertSheet('experience');
+  var head = ['role', 'company', 'location', 'start', 'end', 'current', 'description'];
+  if (sh.getLastRow() === 0) sh.appendRow(head);
+  var headers = sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0];
+  var row = headers.map(function (h) { return x[h] != null ? x[h] : ''; });
+  if (x._row && x._row >= 2) sh.getRange(x._row, 1, 1, row.length).setValues([row]);
+  else sh.appendRow(row);
+}
+
+function deleteExperience(rowNum) {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('experience');
+  if (!sh || !rowNum || rowNum < 2) return;
+  sh.deleteRow(rowNum);
+}
+
+function saveProject(proj) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName('projects') || ss.insertSheet('projects');
+  var head = ['slug', 'title', 'tagline', 'role', 'status', 'stack', 'url', 'image', 'description', 'longDescription', 'accent', 'featured'];
+  if (sh.getLastRow() === 0) sh.appendRow(head);
+  var data = sh.getDataRange().getValues();
+  var headers = data[0];
+  var slugCol = headers.indexOf('slug');
+  var rowIndex = -1;
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][slugCol]) === String(proj.slug)) { rowIndex = i + 1; break; }
+  }
+  var row = headers.map(function (h) { return proj[h] != null ? proj[h] : ''; });
+  if (rowIndex > 0) sh.getRange(rowIndex, 1, 1, row.length).setValues([row]);
+  else sh.appendRow(row);
+}
+
+function deleteProject(slug) {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('projects');
   if (!sh) return;
   var data = sh.getDataRange().getValues();
   var slugCol = data[0].indexOf('slug');
@@ -190,13 +268,88 @@ function json(obj) {
             </div>
           </div>
         </section>
+
+        {/* Workplaces */}
+        <section class="mt-14">
+          <div class="flex items-baseline justify-between border-b border-rule pb-3">
+            <div class="eyebrow">workplaces</div>
+            <button id="x-new" class="font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint hover:text-ink transition-colors">+ new workplace</button>
+          </div>
+          <div id="exp-list-admin" class="mt-2 text-[14px]">—</div>
+
+          <div id="exp-form" class="mt-6 border-t border-dashed border-rule pt-6" hidden>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div><label class="lbl" for="xf-role">role</label><input id="xf-role" type="text" class="f-input" /></div>
+              <div><label class="lbl" for="xf-company">company</label><input id="xf-company" type="text" class="f-input" /></div>
+            </div>
+            <label class="lbl" for="xf-location">location</label>
+            <input id="xf-location" type="text" class="f-input" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div><label class="lbl" for="xf-start">start (yyyy-mm)</label><input id="xf-start" type="text" class="f-input" placeholder="2025-06" /></div>
+              <div><label class="lbl" for="xf-end">end (yyyy-mm)</label><input id="xf-end" type="text" class="f-input" placeholder="blank if current" /></div>
+            </div>
+            <div class="mt-4 flex items-center gap-3">
+              <input id="xf-current" type="checkbox" />
+              <label for="xf-current" class="text-[14px] text-ink-soft">current job (shows "now")</label>
+            </div>
+            <label class="lbl" for="xf-description">description (optional)</label>
+            <textarea id="xf-description" rows="3" class="f-input"></textarea>
+            <div class="mt-5 flex items-center gap-4">
+              <button id="xf-save" class="btn btn-primary">save workplace</button>
+              <button id="xf-cancel" class="btn">cancel</button>
+              <span id="xf-msg" class="saved-msg"></span>
+            </div>
+          </div>
+        </section>
+
+        {/* Projects */}
+        <section class="mt-14">
+          <div class="flex items-baseline justify-between border-b border-rule pb-3">
+            <div class="eyebrow">projects</div>
+            <button id="pr-new" class="font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint hover:text-ink transition-colors">+ new project</button>
+          </div>
+          <div id="proj-list" class="mt-2 text-[14px]">—</div>
+
+          <div id="proj-form" class="mt-6 border-t border-dashed border-rule pt-6" hidden>
+            <label class="lbl" for="rf-title">title</label>
+            <input id="rf-title" type="text" class="f-input" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div><label class="lbl" for="rf-slug">slug</label><input id="rf-slug" type="text" class="f-input" /></div>
+              <div><label class="lbl" for="rf-url">url</label><input id="rf-url" type="url" class="f-input" placeholder="https://…" /></div>
+            </div>
+            <label class="lbl" for="rf-tagline">tagline</label>
+            <input id="rf-tagline" type="text" class="f-input" />
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div><label class="lbl" for="rf-role">role</label><input id="rf-role" type="text" class="f-input" placeholder="full-stack" /></div>
+              <div><label class="lbl" for="rf-status">status</label><input id="rf-status" type="text" class="f-input" placeholder="live" /></div>
+              <div><label class="lbl" for="rf-accent">accent (hex)</label><input id="rf-accent" type="text" class="f-input" placeholder="#2f9e44" /></div>
+            </div>
+            <label class="lbl" for="rf-stack">stack (comma separated)</label>
+            <input id="rf-stack" type="text" class="f-input" placeholder="Laravel, Next.js, PostgreSQL" />
+            <label class="lbl" for="rf-image">image url (optional — blank = gradient)</label>
+            <input id="rf-image" type="url" class="f-input" placeholder="https://…" />
+            <label class="lbl" for="rf-description">short description</label>
+            <textarea id="rf-description" rows="2" class="f-input"></textarea>
+            <label class="lbl" for="rf-longDescription">long description</label>
+            <textarea id="rf-longDescription" rows="5" class="f-input"></textarea>
+            <div class="mt-4 flex items-center gap-3">
+              <input id="rf-featured" type="checkbox" />
+              <label for="rf-featured" class="text-[14px] text-ink-soft">featured</label>
+            </div>
+            <div class="mt-5 flex items-center gap-4">
+              <button id="rf-save" class="btn btn-primary">save project</button>
+              <button id="rf-cancel" class="btn">cancel</button>
+              <span id="rf-msg" class="saved-msg"></span>
+            </div>
+          </div>
+        </section>
       </div>
 
       {/* Setup */}
       <section class="mt-16">
         <div class="eyebrow border-b border-rule pb-3">setup / update the script</div>
         <ol class="mt-5 space-y-3 text-[14.5px] leading-[1.65] text-ink-soft list-decimal pl-5">
-          <li>Sheet needs two tabs: <code>settings</code> (columns <code>key</code>, <code>value</code>) and <code>posts</code> (header <code>slug, title, date, excerpt, tags, draft, body</code>).</li>
+          <li>Two tabs, both "row 1 = headers, rows below = data". <strong class="text-ink">settings</strong> — row 1 headers, spelled exactly: <code>available</code>, <code>availableFor</code>, <code>songTitle</code>, <code>songArtist</code>, <code>songNote</code>, <code>songUrl</code>; put the values on row 2 (no <code>(TRUE/FALSE)</code> text in the header — just <code>available</code>). <strong class="text-ink">posts</strong> — row 1 headers: <code>slug</code>, <code>title</code>, <code>date</code>, <code>excerpt</code>, <code>tags</code>, <code>draft</code>, <code>body</code>; one post per row. The <strong class="text-ink">experience</strong> and <strong class="text-ink">projects</strong> tabs are created for you automatically the first time you add one below.</li>
           <li>Extensions → Apps Script, paste the code below, set <code>SECRET</code> to your chosen password.</li>
           <li>Deploy → Manage deployments → edit (pencil) → Version: <strong class="text-ink">New version</strong> → Deploy. The <code>/exec</code> URL stays the same.</li>
           <li>Make sure <code>src/data/site.json</code> → <code>sheetApi</code> holds that URL (and <code>sheetUrl</code> the sheet's edit link), then redeploy the site once.</li>
@@ -341,11 +494,19 @@ function json(obj) {
   }
 
   let allPosts: any[] = [];
+  let allExp: any[] = [];
+  let allProjects: any[] = [];
+  let editingRow: number | null = null;
+  let editingProjSlug: string | null = null;
 
   function render(state: any) {
     renderSettings(state.settings || {});
     allPosts = state.posts || [];
     renderPosts(allPosts);
+    allExp = state.experience || [];
+    renderExp(allExp);
+    allProjects = state.projects || [];
+    renderProjects(allProjects);
   }
 
   async function loadAndRender() {
@@ -432,6 +593,177 @@ function json(obj) {
       const res = await apiPost({ action: "deletePost", slug: delSlug });
       if (res?.error === "unauthorized") return handleUnauthorized("sf-msg");
       if (res?.posts) render(res);
+      else await loadAndRender();
+    }
+  });
+
+  // ---- workplaces ----
+  function fyear(v: string) {
+    if (!v) return "";
+    const s = String(v);
+    return /^\d{4}$/.test(s) ? s : s.split("-")[0];
+  }
+  function expRange(j: any) {
+    return `${fyear(j.start)} – ${isTrue(j.current) ? "now" : fyear(j.end)}`;
+  }
+  function trimMonth(v: string) {
+    const s = String(v || "");
+    const m = s.match(/^\d{4}-\d{2}/);
+    return m ? m[0] : s;
+  }
+  function renderExp(list: any[]) {
+    const box = $("exp-list-admin");
+    if (!list.length) {
+      box.innerHTML = '<div class="text-ink-faint py-3">no workplaces yet — add one.</div>';
+      return;
+    }
+    box.innerHTML = list
+      .slice()
+      .sort((a, b) => (String(a.start) < String(b.start) ? 1 : -1))
+      .map(
+        (j) =>
+          '<div class="flex items-baseline gap-4 py-3 border-b border-rule">' +
+          '<span class="font-mono text-[11px] text-ink-faint tabular w-24 shrink-0">' + esc(expRange(j)) + "</span>" +
+          '<span class="flex-1 text-ink">' + esc(j.role) + ' <span class="text-ink-faint">· ' + esc(j.company) + "</span></span>" +
+          '<button class="font-mono text-[11px] uppercase tracking-[0.1em] text-ink-faint hover:text-ink transition-colors" data-xedit="' + j._row + '">edit</button>' +
+          '<button class="font-mono text-[11px] uppercase tracking-[0.1em] text-ink-faint hover:text-accent transition-colors" data-xdel="' + j._row + '">delete</button>' +
+          "</div>",
+      )
+      .join("");
+  }
+  function openExpForm(entry: any | null) {
+    editingRow = entry ? entry._row : null;
+    ($("xf-role") as HTMLInputElement).value = entry ? entry.role ?? "" : "";
+    ($("xf-company") as HTMLInputElement).value = entry ? entry.company ?? "" : "";
+    ($("xf-location") as HTMLInputElement).value = entry ? entry.location ?? "" : "";
+    ($("xf-start") as HTMLInputElement).value = entry ? trimMonth(entry.start) : "";
+    ($("xf-end") as HTMLInputElement).value = entry ? trimMonth(entry.end) : "";
+    ($("xf-current") as HTMLInputElement).checked = entry ? isTrue(entry.current) : false;
+    ($("xf-description") as HTMLTextAreaElement).value = entry ? entry.description ?? "" : "";
+    $("exp-form").hidden = false;
+    $("xf-role").scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  $("x-new").addEventListener("click", () => openExpForm(null));
+  $("xf-cancel").addEventListener("click", () => ($("exp-form").hidden = true));
+  $("xf-save").addEventListener("click", async () => {
+    const role = ($("xf-role") as HTMLInputElement).value.trim();
+    const company = ($("xf-company") as HTMLInputElement).value.trim();
+    if (!role || !company) return flash("xf-msg", "role + company required", true);
+    const exp: any = {
+      role,
+      company,
+      location: ($("xf-location") as HTMLInputElement).value.trim(),
+      start: ($("xf-start") as HTMLInputElement).value.trim(),
+      end: ($("xf-end") as HTMLInputElement).value.trim(),
+      current: ($("xf-current") as HTMLInputElement).checked,
+      description: ($("xf-description") as HTMLTextAreaElement).value.trim(),
+    };
+    if (editingRow) exp._row = editingRow;
+    const res = await apiPost({ action: "saveExperience", experience: exp });
+    if (res?.error === "unauthorized") return handleUnauthorized("xf-msg");
+    if (res?.experience) render(res);
+    else await loadAndRender();
+    $("exp-form").hidden = true;
+    flash("xf-msg", "saved");
+  });
+  $("exp-list-admin").addEventListener("click", async (e) => {
+    const t = e.target as HTMLElement;
+    const editRow = t.getAttribute("data-xedit");
+    const delRow = t.getAttribute("data-xdel");
+    if (editRow) {
+      const entry = allExp.find((j) => String(j._row) === editRow);
+      if (entry) openExpForm(entry);
+    }
+    if (delRow && confirm("Delete this workplace?")) {
+      const res = await apiPost({ action: "deleteExperience", row: Number(delRow) });
+      if (res?.error === "unauthorized") return handleUnauthorized("xf-msg");
+      if (res?.experience) render(res);
+      else await loadAndRender();
+    }
+  });
+
+  // ---- projects ----
+  function renderProjects(list: any[]) {
+    const box = $("proj-list");
+    if (!list.length) {
+      box.innerHTML = '<div class="text-ink-faint py-3">no projects in the sheet — the static list on the site shows until you add one here.</div>';
+      return;
+    }
+    box.innerHTML = list
+      .map(
+        (p) =>
+          '<div class="flex items-baseline gap-4 py-3 border-b border-rule">' +
+          '<span class="flex-1 text-ink">' + esc(p.title) +
+          (isTrue(p.featured) ? ' <span class="text-ink-faint">★</span>' : "") + "</span>" +
+          '<span class="font-mono text-[11px] text-ink-faint">' + esc(p.status || "") + "</span>" +
+          '<button class="font-mono text-[11px] uppercase tracking-[0.1em] text-ink-faint hover:text-ink transition-colors" data-redit="' + esc(p.slug) + '">edit</button>' +
+          '<button class="font-mono text-[11px] uppercase tracking-[0.1em] text-ink-faint hover:text-accent transition-colors" data-rdel="' + esc(p.slug) + '">delete</button>' +
+          "</div>",
+      )
+      .join("");
+  }
+  function openProjForm(p: any | null) {
+    editingProjSlug = p ? String(p.slug) : null;
+    ($("rf-title") as HTMLInputElement).value = p ? p.title ?? "" : "";
+    ($("rf-slug") as HTMLInputElement).value = p ? String(p.slug) : "";
+    ($("rf-url") as HTMLInputElement).value = p ? p.url ?? "" : "";
+    ($("rf-tagline") as HTMLInputElement).value = p ? p.tagline ?? "" : "";
+    ($("rf-role") as HTMLInputElement).value = p ? p.role ?? "" : "full-stack";
+    ($("rf-status") as HTMLInputElement).value = p ? p.status ?? "" : "live";
+    ($("rf-accent") as HTMLInputElement).value = p ? p.accent ?? "" : "";
+    ($("rf-stack") as HTMLInputElement).value = p ? String(p.stack ?? "") : "";
+    ($("rf-image") as HTMLInputElement).value = p ? p.image ?? "" : "";
+    ($("rf-description") as HTMLTextAreaElement).value = p ? p.description ?? "" : "";
+    ($("rf-longDescription") as HTMLTextAreaElement).value = p ? p.longDescription ?? "" : "";
+    ($("rf-featured") as HTMLInputElement).checked = p ? isTrue(p.featured) : false;
+    $("proj-form").hidden = false;
+    $("rf-title").scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+  $("rf-title").addEventListener("input", () => {
+    if (editingProjSlug) return;
+    ($("rf-slug") as HTMLInputElement).value = slugify(($("rf-title") as HTMLInputElement).value);
+  });
+  $("pr-new").addEventListener("click", () => openProjForm(null));
+  $("rf-cancel").addEventListener("click", () => ($("proj-form").hidden = true));
+  $("rf-save").addEventListener("click", async () => {
+    const slug = ($("rf-slug") as HTMLInputElement).value.trim();
+    const title = ($("rf-title") as HTMLInputElement).value.trim();
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return flash("rf-msg", "bad slug", true);
+    if (!title) return flash("rf-msg", "title required", true);
+    const project = {
+      slug,
+      title,
+      tagline: ($("rf-tagline") as HTMLInputElement).value.trim(),
+      role: ($("rf-role") as HTMLInputElement).value.trim(),
+      status: ($("rf-status") as HTMLInputElement).value.trim(),
+      stack: ($("rf-stack") as HTMLInputElement).value.trim(),
+      url: ($("rf-url") as HTMLInputElement).value.trim(),
+      image: ($("rf-image") as HTMLInputElement).value.trim(),
+      description: ($("rf-description") as HTMLTextAreaElement).value.trim(),
+      longDescription: ($("rf-longDescription") as HTMLTextAreaElement).value.trim(),
+      accent: ($("rf-accent") as HTMLInputElement).value.trim(),
+      featured: ($("rf-featured") as HTMLInputElement).checked,
+    };
+    const res = await apiPost({ action: "saveProject", project });
+    if (res?.error === "unauthorized") return handleUnauthorized("rf-msg");
+    if (res?.projects) render(res);
+    else await loadAndRender();
+    $("proj-form").hidden = true;
+    flash("rf-msg", "saved");
+  });
+  $("proj-list").addEventListener("click", async (e) => {
+    const t = e.target as HTMLElement;
+    const editSlug = t.getAttribute("data-redit");
+    const delSlug = t.getAttribute("data-rdel");
+    if (editSlug) {
+      const p = allProjects.find((x) => String(x.slug) === editSlug);
+      if (p) openProjForm(p);
+    }
+    if (delSlug && confirm(`Delete "${delSlug}"?`)) {
+      const res = await apiPost({ action: "deleteProject", slug: delSlug });
+      if (res?.error === "unauthorized") return handleUnauthorized("rf-msg");
+      if (res?.projects) render(res);
       else await loadAndRender();
     }
   });
