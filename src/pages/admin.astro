@@ -6,32 +6,89 @@ import site from "../data/site.json";
 
 const configured = !!site.sheetApi;
 
-// Paste this into Extensions → Apps Script in your sheet, then Deploy → New
-// deployment → Web app (execute as you, access: Anyone) and copy the /exec URL.
-const APPS_SCRIPT = `function doGet() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const out = { settings: {}, posts: [] };
+// Paste this into Extensions → Apps Script, set SECRET, then redeploy the SAME
+// web app as a NEW VERSION (Manage deployments → edit → Version: New version).
+const APPS_SCRIPT = `const SECRET = 'change-me'; // your admin password — used to write
 
-  const s = ss.getSheetByName('settings');
-  if (s) {
-    s.getDataRange().getValues().slice(1).forEach(function (r) {
-      if (r[0]) out.settings[r[0]] = r[1];
-    });
-  }
+function doGet() {
+  return json(readAll());
+}
 
-  const p = ss.getSheetByName('posts');
+function doPost(e) {
+  var body = {};
+  try { body = JSON.parse(e.postData.contents); } catch (err) {}
+  if (body.token !== SECRET) return json({ error: 'unauthorized' });
+
+  if (body.action === 'ping') return json({ ok: true });
+  if (body.action === 'saveSettings') saveSettings(body.settings || {});
+  else if (body.action === 'savePost') savePost(body.post || {});
+  else if (body.action === 'deletePost') deletePost(body.slug);
+
+  return json(readAll());
+}
+
+function readAll() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var out = { settings: {}, posts: [] };
+  var s = ss.getSheetByName('settings');
+  if (s) s.getDataRange().getValues().slice(1).forEach(function (r) {
+    if (r[0]) out.settings[r[0]] = r[1];
+  });
+  var p = ss.getSheetByName('posts');
   if (p) {
-    const rows = p.getDataRange().getValues();
-    const head = rows.shift();
+    var rows = p.getDataRange().getValues();
+    var head = rows.shift();
     rows.forEach(function (r) {
-      const o = {};
+      var o = {};
       head.forEach(function (h, i) { o[h] = r[i]; });
       if (o.slug) out.posts.push(o);
     });
   }
+  return out;
+}
 
+function saveSettings(obj) {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('settings');
+  if (!sh) return;
+  var values = sh.getDataRange().getValues();
+  var rowByKey = {};
+  for (var i = 1; i < values.length; i++) rowByKey[values[i][0]] = i + 1;
+  Object.keys(obj).forEach(function (k) {
+    if (rowByKey[k]) sh.getRange(rowByKey[k], 2).setValue(obj[k]);
+    else sh.appendRow([k, obj[k]]);
+  });
+}
+
+function savePost(post) {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('posts');
+  if (!sh) return;
+  var head = ['slug', 'title', 'date', 'excerpt', 'tags', 'draft', 'body'];
+  if (sh.getLastRow() === 0) sh.appendRow(head);
+  var data = sh.getDataRange().getValues();
+  var headers = data[0];
+  var slugCol = headers.indexOf('slug');
+  var rowIndex = -1;
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][slugCol]) === String(post.slug)) { rowIndex = i + 1; break; }
+  }
+  var row = headers.map(function (h) { return post[h] != null ? post[h] : ''; });
+  if (rowIndex > 0) sh.getRange(rowIndex, 1, 1, row.length).setValues([row]);
+  else sh.appendRow(row);
+}
+
+function deletePost(slug) {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('posts');
+  if (!sh) return;
+  var data = sh.getDataRange().getValues();
+  var slugCol = data[0].indexOf('slug');
+  for (var i = data.length - 1; i >= 1; i--) {
+    if (String(data[i][slugCol]) === String(slug)) sh.deleteRow(i + 1);
+  }
+}
+
+function json(obj) {
   return ContentService
-    .createTextOutput(JSON.stringify(out))
+    .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }`;
 ---
@@ -41,48 +98,109 @@ const APPS_SCRIPT = `function doGet() {
   <main id="main" class="pt-32 pb-24 px-5 md:px-8">
     <div class="mx-auto max-w-3xl">
       <div class="flex items-baseline justify-between border-b border-rule pb-4">
-        <h1 class="eyebrow">admin · content dashboard</h1>
-        <span id="status" class="font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint">checking…</span>
+        <h1 class="eyebrow">admin · content</h1>
+        <div class="flex items-center gap-5">
+          <span id="status" class="font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint">checking…</span>
+          <button id="lock-btn" class="font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint hover:text-ink transition-colors" hidden>lock</button>
+        </div>
       </div>
 
       {!configured && (
         <p class="mt-6 text-[15px] leading-[1.7] text-ink-soft max-w-[60ch]">
-          No sheet connected yet — the site is running on its built-in content. Follow the
-          setup below, paste your Web-App URL into <code class="font-mono text-[13px]">src/data/site.json</code>,
-          and redeploy once. After that, edits to the sheet appear on the site live.
+          No sheet connected yet — the site is running on its built-in content. Do the
+          setup below, put your Web-App URL in <code>src/data/site.json</code>, redeploy once,
+          then this page becomes your editor.
         </p>
       )}
 
-      {/* Live values */}
-      <section class="mt-12">
-        <div class="eyebrow border-b border-rule pb-3">current values</div>
-        <div id="values" class="mt-4 text-[14px] text-ink-soft">—</div>
+      {/* Password gate */}
+      <section id="gate" class="mt-12" hidden>
+        <div class="eyebrow border-b border-rule pb-3 mb-6">locked</div>
+        <label class="lbl" for="pw">password</label>
+        <div class="flex gap-3 max-w-sm">
+          <input id="pw" type="password" class="f-input" autocomplete="current-password" placeholder="•••••••" />
+          <button id="unlock-btn" class="btn btn-primary shrink-0">unlock</button>
+        </div>
+        <p id="gate-msg" class="mt-3 font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint"></p>
+        <p class="mt-4 text-[13px] text-ink-faint max-w-[52ch]">
+          The password is the <code>SECRET</code> you set in the Apps Script. It's checked on the
+          Google side — writes are rejected without it.
+        </p>
       </section>
 
-      {/* Posts */}
-      <section class="mt-12">
-        <div class="flex items-baseline justify-between border-b border-rule pb-3">
-          <div class="eyebrow">posts in sheet</div>
-          {site.sheetUrl && (
-            <a href={site.sheetUrl} target="_blank" rel="noreferrer" class="link-arrow font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint hover:text-ink transition-colors">
-              <span>open sheet</span><span class="arrow">↗</span>
-            </a>
-          )}
-        </div>
-        <div id="posts" class="mt-2 text-[14px] text-ink-soft">—</div>
-      </section>
+      {/* Editor */}
+      <div id="editor" hidden>
+        {/* Settings */}
+        <section class="mt-12">
+          <div class="eyebrow border-b border-rule pb-3">site settings</div>
+          <div class="mt-5 flex items-center gap-3">
+            <input id="sf-available" type="checkbox" />
+            <label for="sf-available" class="text-[14px] text-ink-soft">show "available for…" on the homepage</label>
+          </div>
+          <label class="lbl" for="sf-availableFor">available for</label>
+          <input id="sf-availableFor" type="text" class="f-input" />
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div><label class="lbl" for="sf-songTitle">song title</label><input id="sf-songTitle" type="text" class="f-input" /></div>
+            <div><label class="lbl" for="sf-songArtist">song artist</label><input id="sf-songArtist" type="text" class="f-input" /></div>
+          </div>
+          <label class="lbl" for="sf-songNote">song note</label>
+          <input id="sf-songNote" type="text" class="f-input" />
+          <label class="lbl" for="sf-songUrl">song url</label>
+          <input id="sf-songUrl" type="url" class="f-input" placeholder="https://…" />
+          <div class="mt-5 flex items-center gap-4">
+            <button id="sf-save" class="btn btn-primary">save settings</button>
+            <span id="sf-msg" class="saved-msg"></span>
+          </div>
+        </section>
+
+        {/* Posts */}
+        <section class="mt-14">
+          <div class="flex items-baseline justify-between border-b border-rule pb-3">
+            <div class="eyebrow">posts</div>
+            <div class="flex items-center gap-5">
+              {site.sheetUrl && (
+                <a href={site.sheetUrl} target="_blank" rel="noreferrer" class="font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint hover:text-ink transition-colors">open sheet ↗</a>
+              )}
+              <button id="p-new" class="font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint hover:text-ink transition-colors">+ new post</button>
+            </div>
+          </div>
+          <div id="posts-list" class="mt-2 text-[14px]">—</div>
+
+          <div id="post-form" class="mt-6 border-t border-dashed border-rule pt-6" hidden>
+            <label class="lbl" for="pf-title">title</label>
+            <input id="pf-title" type="text" class="f-input" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div><label class="lbl" for="pf-slug">slug</label><input id="pf-slug" type="text" class="f-input" /></div>
+              <div><label class="lbl" for="pf-date">date</label><input id="pf-date" type="date" class="f-input" /></div>
+            </div>
+            <label class="lbl" for="pf-excerpt">excerpt</label>
+            <input id="pf-excerpt" type="text" class="f-input" />
+            <label class="lbl" for="pf-tags">tags (comma separated)</label>
+            <input id="pf-tags" type="text" class="f-input" placeholder="engineering, astro" />
+            <div class="mt-4 flex items-center gap-3">
+              <input id="pf-draft" type="checkbox" />
+              <label for="pf-draft" class="text-[14px] text-ink-soft">draft (hidden from the site)</label>
+            </div>
+            <label class="lbl" for="pf-body">body (markdown)</label>
+            <textarea id="pf-body" rows="14" class="f-input font-mono text-[13px]"></textarea>
+            <div class="mt-5 flex items-center gap-4">
+              <button id="pf-save" class="btn btn-primary">save post</button>
+              <button id="pf-cancel" class="btn">cancel</button>
+              <span id="pf-msg" class="saved-msg"></span>
+            </div>
+          </div>
+        </section>
+      </div>
 
       {/* Setup */}
       <section class="mt-16">
-        <div class="eyebrow border-b border-rule pb-3">setup · one time</div>
+        <div class="eyebrow border-b border-rule pb-3">setup / update the script</div>
         <ol class="mt-5 space-y-3 text-[14.5px] leading-[1.65] text-ink-soft list-decimal pl-5">
-          <li>Create a Google Sheet with two tabs: <code class="font-mono text-[13px]">settings</code> and <code class="font-mono text-[13px]">posts</code>.</li>
-          <li><strong class="text-ink">settings</strong> tab — two columns <code class="font-mono text-[13px]">key</code>, <code class="font-mono text-[13px]">value</code>. Rows: <code class="font-mono text-[13px]">available</code> (TRUE/FALSE), <code class="font-mono text-[13px]">availableFor</code>, <code class="font-mono text-[13px]">songTitle</code>, <code class="font-mono text-[13px]">songArtist</code>, <code class="font-mono text-[13px]">songNote</code>, <code class="font-mono text-[13px]">songUrl</code>.</li>
-          <li><strong class="text-ink">posts</strong> tab — header row: <code class="font-mono text-[13px]">slug, title, date, excerpt, tags, draft, body</code>. One post per row; <code class="font-mono text-[13px]">tags</code> comma-separated, <code class="font-mono text-[13px]">body</code> is Markdown.</li>
-          <li>Extensions → Apps Script, paste the code below, Deploy → New deployment → <strong class="text-ink">Web app</strong> (execute as you · access: Anyone), copy the <code class="font-mono text-[13px]">/exec</code> URL.</li>
-          <li>Put that URL in <code class="font-mono text-[13px]">src/data/site.json</code> → <code class="font-mono text-[13px]">sheetApi</code> (and the sheet's edit link in <code class="font-mono text-[13px]">sheetUrl</code>), then redeploy once.</li>
+          <li>Sheet needs two tabs: <code>settings</code> (columns <code>key</code>, <code>value</code>) and <code>posts</code> (header <code>slug, title, date, excerpt, tags, draft, body</code>).</li>
+          <li>Extensions → Apps Script, paste the code below, set <code>SECRET</code> to your chosen password.</li>
+          <li>Deploy → Manage deployments → edit (pencil) → Version: <strong class="text-ink">New version</strong> → Deploy. The <code>/exec</code> URL stays the same.</li>
+          <li>Make sure <code>src/data/site.json</code> → <code>sheetApi</code> holds that URL (and <code>sheetUrl</code> the sheet's edit link), then redeploy the site once.</li>
         </ol>
-
         <div class="eyebrow mt-8 mb-2">Apps Script</div>
         <pre class="text-[12.5px] leading-[1.6] text-ink bg-bg-2 border border-rule p-4 overflow-x-auto"><code>{APPS_SCRIPT}</code></pre>
       </section>
@@ -91,53 +209,286 @@ const APPS_SCRIPT = `function doGet() {
   <Footer />
 </Layout>
 
+<style>
+  .lbl {
+    display: block;
+    margin: 16px 0 5px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-ink-faint);
+  }
+  .f-input {
+    width: 100%;
+    border: 1px solid var(--color-rule);
+    border-radius: 0;
+    padding: 9px 11px;
+    font-size: 14px;
+    background: #fff;
+    color: var(--color-ink);
+    outline: none;
+  }
+  .f-input:focus { border-color: var(--color-ink); }
+  textarea.f-input { resize: vertical; line-height: 1.6; }
+  .saved-msg {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-ink-faint);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .saved-msg.on { opacity: 1; }
+  .saved-msg.err { color: var(--color-accent); }
+</style>
+
 <script>
-  import { loadSheet, fmtDate } from "../lib/sheet";
+  import site from "../data/site.json";
+  import { fmtDate } from "../lib/sheet";
 
+  const API = (site as { sheetApi?: string }).sheetApi || "";
+  const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
   const esc = (s: string) =>
-    String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const isTrue = (v: unknown) => v === true || String(v ?? "").trim().toLowerCase() === "true";
 
-  const statusEl = document.getElementById("status")!;
-  const valuesEl = document.getElementById("values")!;
-  const postsEl = document.getElementById("posts")!;
+  const statusEl = $("status");
+  const gateEl = $("gate");
+  const editorEl = $("editor");
+  const lockBtn = $("lock-btn");
 
-  loadSheet().then((data) => {
-    if (!data) {
+  let editingSlug: string | null = null;
+
+  async function fetchState(): Promise<any | null> {
+    if (!API) return null;
+    try {
+      const r = await fetch(API, { redirect: "follow" });
+      return r.ok ? await r.json() : null;
+    } catch {
+      return null;
+    }
+  }
+
+  async function apiPost(payload: Record<string, unknown>): Promise<any | null> {
+    const token = sessionStorage.getItem("adminToken") || "";
+    try {
+      const r = await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ ...payload, token }),
+        redirect: "follow",
+      });
+      try {
+        return await r.json();
+      } catch {
+        return { unread: true }; // write likely landed; response not readable
+      }
+    } catch {
+      return null;
+    }
+  }
+
+  function flash(id: string, msg: string, err = false) {
+    const el = $(id);
+    el.textContent = msg;
+    el.classList.toggle("err", err);
+    el.classList.add("on");
+    setTimeout(() => el.classList.remove("on"), 2600);
+  }
+
+  function showGate() {
+    gateEl.hidden = false;
+    editorEl.hidden = true;
+    lockBtn.hidden = true;
+  }
+  function showEditor() {
+    gateEl.hidden = true;
+    editorEl.hidden = false;
+    lockBtn.hidden = false;
+  }
+
+  function renderSettings(s: Record<string, any>) {
+    ($("sf-available") as HTMLInputElement).checked = isTrue(s.available);
+    ($("sf-availableFor") as HTMLInputElement).value = s.availableFor ?? "";
+    ($("sf-songTitle") as HTMLInputElement).value = s.songTitle ?? "";
+    ($("sf-songArtist") as HTMLInputElement).value = s.songArtist ?? "";
+    ($("sf-songNote") as HTMLInputElement).value = s.songNote ?? "";
+    ($("sf-songUrl") as HTMLInputElement).value = s.songUrl ?? "";
+  }
+
+  function renderPosts(posts: any[]) {
+    const box = $("posts-list");
+    if (!posts.length) {
+      box.innerHTML = '<div class="text-ink-faint py-3">no posts yet — add one.</div>';
+      return;
+    }
+    box.innerHTML = posts
+      .slice()
+      .sort((a, b) => (String(a.date) < String(b.date) ? 1 : -1))
+      .map(
+        (p) =>
+          '<div class="flex items-baseline gap-4 py-3 border-b border-rule">' +
+          '<span class="font-mono text-[11px] text-ink-faint tabular w-24 shrink-0">' + esc(fmtDate(String(p.date))) + "</span>" +
+          '<span class="flex-1 text-ink">' + esc(p.title) + "</span>" +
+          (isTrue(p.draft) ? '<span class="font-mono text-[10px] uppercase tracking-[0.1em] text-ink-faint border border-rule px-1.5">draft</span>' : "") +
+          '<button class="font-mono text-[11px] uppercase tracking-[0.1em] text-ink-faint hover:text-ink transition-colors" data-edit="' + esc(p.slug) + '">edit</button>' +
+          '<button class="font-mono text-[11px] uppercase tracking-[0.1em] text-ink-faint hover:text-accent transition-colors" data-del="' + esc(p.slug) + '">delete</button>' +
+          "</div>",
+      )
+      .join("");
+  }
+
+  let allPosts: any[] = [];
+
+  function render(state: any) {
+    renderSettings(state.settings || {});
+    allPosts = state.posts || [];
+    renderPosts(allPosts);
+  }
+
+  async function loadAndRender() {
+    const state = await fetchState();
+    if (state) render(state);
+  }
+
+  // ---- settings save ----
+  $("sf-save").addEventListener("click", async () => {
+    const payload = {
+      action: "saveSettings",
+      settings: {
+        available: ($("sf-available") as HTMLInputElement).checked,
+        availableFor: ($("sf-availableFor") as HTMLInputElement).value.trim(),
+        songTitle: ($("sf-songTitle") as HTMLInputElement).value.trim(),
+        songArtist: ($("sf-songArtist") as HTMLInputElement).value.trim(),
+        songNote: ($("sf-songNote") as HTMLInputElement).value.trim(),
+        songUrl: ($("sf-songUrl") as HTMLInputElement).value.trim(),
+      },
+    };
+    const res = await apiPost(payload);
+    if (res?.error === "unauthorized") return handleUnauthorized("sf-msg");
+    if (res?.settings) render(res);
+    else await loadAndRender();
+    flash("sf-msg", "saved");
+  });
+
+  // ---- post form ----
+  function openForm(post: any | null) {
+    editingSlug = post ? String(post.slug) : null;
+    ($("pf-title") as HTMLInputElement).value = post ? post.title ?? "" : "";
+    ($("pf-slug") as HTMLInputElement).value = post ? String(post.slug) : "";
+    ($("pf-date") as HTMLInputElement).value = post ? String(post.date).slice(0, 10) : new Date().toISOString().slice(0, 10);
+    ($("pf-excerpt") as HTMLInputElement).value = post ? post.excerpt ?? "" : "";
+    ($("pf-tags") as HTMLInputElement).value = post ? String(post.tags ?? "") : "";
+    ($("pf-draft") as HTMLInputElement).checked = post ? isTrue(post.draft) : false;
+    ($("pf-body") as HTMLTextAreaElement).value = post ? post.body ?? "" : "";
+    $("post-form").hidden = false;
+    $("pf-title").scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  const slugify = (t: string) =>
+    t.toLowerCase().replace(/['’]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
+  $("pf-title").addEventListener("input", () => {
+    if (editingSlug) return;
+    ($("pf-slug") as HTMLInputElement).value = slugify(($("pf-title") as HTMLInputElement).value);
+  });
+
+  $("p-new").addEventListener("click", () => openForm(null));
+  $("pf-cancel").addEventListener("click", () => ($("post-form").hidden = true));
+
+  $("pf-save").addEventListener("click", async () => {
+    const slug = ($("pf-slug") as HTMLInputElement).value.trim();
+    const title = ($("pf-title") as HTMLInputElement).value.trim();
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return flash("pf-msg", "bad slug", true);
+    if (!title) return flash("pf-msg", "title required", true);
+    const post = {
+      slug,
+      title,
+      date: ($("pf-date") as HTMLInputElement).value,
+      excerpt: ($("pf-excerpt") as HTMLInputElement).value.trim(),
+      tags: ($("pf-tags") as HTMLInputElement).value.trim(),
+      draft: ($("pf-draft") as HTMLInputElement).checked,
+      body: ($("pf-body") as HTMLTextAreaElement).value,
+    };
+    const res = await apiPost({ action: "savePost", post });
+    if (res?.error === "unauthorized") return handleUnauthorized("pf-msg");
+    if (res?.posts) render(res);
+    else await loadAndRender();
+    $("post-form").hidden = true;
+    flash("pf-msg", "saved");
+  });
+
+  $("posts-list").addEventListener("click", async (e) => {
+    const t = e.target as HTMLElement;
+    const editSlug = t.getAttribute("data-edit");
+    const delSlug = t.getAttribute("data-del");
+    if (editSlug) {
+      const post = allPosts.find((p) => String(p.slug) === editSlug);
+      if (post) openForm(post);
+    }
+    if (delSlug && confirm(`Delete "${delSlug}"?`)) {
+      const res = await apiPost({ action: "deletePost", slug: delSlug });
+      if (res?.error === "unauthorized") return handleUnauthorized("sf-msg");
+      if (res?.posts) render(res);
+      else await loadAndRender();
+    }
+  });
+
+  function handleUnauthorized(msgId: string) {
+    sessionStorage.removeItem("adminToken");
+    flash(msgId, "wrong password", true);
+    showGate();
+  }
+
+  // ---- gate ----
+  async function tryUnlock() {
+    const pw = ($("pw") as HTMLInputElement).value;
+    if (!pw) return;
+    sessionStorage.setItem("adminToken", pw);
+    $("gate-msg").textContent = "checking…";
+    const res = await apiPost({ action: "ping" });
+    if (res?.ok) {
+      $("gate-msg").textContent = "";
+      showEditor();
+      await loadAndRender();
+    } else if (res?.error === "unauthorized") {
+      sessionStorage.removeItem("adminToken");
+      $("gate-msg").textContent = "wrong password";
+    } else {
+      // couldn't read the response — proceed optimistically
+      $("gate-msg").textContent = "";
+      showEditor();
+      await loadAndRender();
+    }
+  }
+
+  $("unlock-btn").addEventListener("click", tryUnlock);
+  $("pw").addEventListener("keydown", (e) => {
+    if ((e as KeyboardEvent).key === "Enter") tryUnlock();
+  });
+  lockBtn.addEventListener("click", () => {
+    sessionStorage.removeItem("adminToken");
+    showGate();
+  });
+
+  // ---- boot ----
+  (async () => {
+    const state = await fetchState();
+    if (!API || !state) {
       statusEl.textContent = "not connected";
-      valuesEl.textContent = "Connect the sheet to see live values here.";
-      postsEl.textContent = "—";
+      showGate();
+      gateEl.hidden = true; // nothing to unlock into yet
       return;
     }
     statusEl.textContent = "● connected";
     statusEl.className = "font-mono text-[11px] uppercase tracking-[0.12em] text-accent";
-
-    const s = data.settings;
-    const rows = Object.keys(s).length
-      ? Object.entries(s)
-          .map(
-            ([k, v]) =>
-              '<div class="flex gap-4 py-2 border-b border-rule"><span class="font-mono text-[11px] uppercase tracking-[0.1em] text-ink-faint w-32 shrink-0">' +
-              esc(k) + '</span><span class="text-ink">' + (esc(String(v)) || "—") + "</span></div>",
-          )
-          .join("")
-      : '<span class="text-ink-faint">settings tab is empty</span>';
-    valuesEl.innerHTML = rows;
-
-    if (!data.posts.length) {
-      postsEl.innerHTML = '<span class="text-ink-faint">no posts in the sheet yet</span>';
-      return;
+    if (sessionStorage.getItem("adminToken")) {
+      showEditor();
+      render(state);
+    } else {
+      showGate();
     }
-    postsEl.innerHTML = data.posts
-      .slice()
-      .sort((a, b) => (a.date < b.date ? 1 : -1))
-      .map(
-        (p) =>
-          '<div class="flex items-baseline gap-4 py-2 border-b border-rule">' +
-          '<span class="font-mono text-[11px] text-ink-faint tabular w-24 shrink-0">' + esc(fmtDate(p.date)) + "</span>" +
-          '<a href="/blog?p=' + encodeURIComponent(p.slug) + '" class="text-ink hover:text-ink-faint transition-colors flex-1">' + esc(p.title) + "</a>" +
-          (p.draft ? '<span class="font-mono text-[10px] uppercase tracking-[0.1em] text-ink-faint border border-rule px-1.5">draft</span>' : "") +
-          "</div>",
-      )
-      .join("");
-  });
+  })();
 </script>

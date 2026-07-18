@@ -87,6 +87,39 @@ function send(res, code, data, type = "application/json") {
   res.end(type === "application/json" ? JSON.stringify(data) : data);
 }
 
+// ---- Mock of the Google Apps Script Web App (read + write), for local testing ----
+const MOCK_TOKEN = "test";
+let MOCK = {
+  settings: {
+    available: true,
+    availableFor: "interesting problems",
+    songTitle: "Chameleon",
+    songArtist: "Herbie Hancock",
+    songNote: "the pocket",
+    songUrl: "https://youtu.be/nk8fXNBUZ0Y",
+  },
+  posts: [
+    {
+      slug: "hello-from-the-sheet",
+      title: "Hello from the sheet",
+      date: "2026-07-18",
+      excerpt: "This post is served live from Google Sheets — no redeploy.",
+      tags: "meta, astro",
+      draft: false,
+      body: "# It works\n\nThis whole post lives in a **spreadsheet cell**.\n\n- Edit the sheet\n- Refresh\n- Done\n\n> No rebuild required.\n\n```js\nconsole.log('rendered client-side')\n```",
+    },
+  ],
+};
+
+function mockRespond(res, obj) {
+  res.writeHead(200, {
+    "content-type": "application/json; charset=utf-8",
+    "access-control-allow-origin": "*",
+    "access-control-allow-headers": "*",
+  });
+  res.end(JSON.stringify(obj));
+}
+
 createServer(async (req, res) => {
   try {
     const url = new URL(req.url, "http://localhost");
@@ -174,33 +207,32 @@ createServer(async (req, res) => {
       return send(res, 200, { ok: true });
     }
 
-    // Mock of the Google Apps Script Web App, for local testing of the live path.
-    if (route === "GET /mock-sheet") {
-      res.writeHead(200, {
-        "content-type": "application/json; charset=utf-8",
-        "access-control-allow-origin": "*",
-      });
-      return res.end(JSON.stringify({
-        settings: {
-          available: true,
-          availableFor: "interesting problems",
-          songTitle: "Chameleon",
-          songArtist: "Herbie Hancock",
-          songNote: "the pocket",
-          songUrl: "https://youtu.be/nk8fXNBUZ0Y",
-        },
-        posts: [
-          {
-            slug: "hello-from-the-sheet",
-            title: "Hello from the sheet",
-            date: "2026-07-18",
-            excerpt: "This post is served live from Google Sheets — no redeploy.",
-            tags: "meta, astro",
-            draft: false,
-            body: "# It works\n\nThis whole post lives in a **spreadsheet cell**.\n\n- Edit the sheet\n- Refresh\n- Done\n\n> No rebuild required.\n\n```js\nconsole.log('rendered client-side')\n```",
-          },
-        ],
-      }));
+    // Mock of the Google Apps Script Web App (read via GET, write via POST).
+    if (url.pathname === "/mock-sheet") {
+      if (req.method === "OPTIONS") {
+        res.writeHead(204, {
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET,POST,OPTIONS",
+          "access-control-allow-headers": "*",
+        });
+        return res.end();
+      }
+      if (req.method === "GET") return mockRespond(res, MOCK);
+      if (req.method === "POST") {
+        const b = await readBody(req);
+        if (b.token !== MOCK_TOKEN) return mockRespond(res, { error: "unauthorized" });
+        if (b.action === "ping") return mockRespond(res, { ok: true });
+        if (b.action === "saveSettings") Object.assign(MOCK.settings, b.settings || {});
+        else if (b.action === "savePost") {
+          const post = b.post || {};
+          const i = MOCK.posts.findIndex((p) => String(p.slug) === String(post.slug));
+          if (i >= 0) MOCK.posts[i] = post;
+          else MOCK.posts.push(post);
+        } else if (b.action === "deletePost") {
+          MOCK.posts = MOCK.posts.filter((p) => String(p.slug) !== String(b.slug));
+        }
+        return mockRespond(res, MOCK);
+      }
     }
 
     send(res, 404, { error: "not found" });
