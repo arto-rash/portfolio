@@ -270,13 +270,8 @@
       "TypeScript",
       "Google Apps Script"
     ],
-    "url": "https://entesk-google-platform.vercel.app/",
-    "links": [
-      {
-        "label": "Live demo",
-        "url": "https://entesk-google-platform.vercel.app/"
-      }
-    ],
+    "url": "",
+    "links": [],
     "image": "",
     "screenshots": [],
     "accent": "#0d9488",

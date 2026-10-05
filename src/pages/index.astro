@@ -53,7 +53,7 @@ const socials = [
 
           <div class="col-span-12 md:col-span-3 flex md:justify-end" data-reveal style="--reveal-delay:120ms">
             {profile.photo && (
-              <figure class="entry p-2 pb-1 rotate-[2deg] w-[150px] md:w-[180px]">
+              <figure class="entry p-2 rotate-[2deg] w-[150px] md:w-[180px]">
                 <img
                   src={profile.photo}
                   alt={`${profile.name} portrait`}
@@ -61,7 +61,6 @@ const socials = [
                   loading="eager"
                   onerror="this.closest('figure').style.display='none'"
                 />
-                <figcaption class="font-display text-[15px] text-center py-1">me, probably debugging</figcaption>
               </figure>
             )}
           </div>
