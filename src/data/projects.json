@@ -1,22 +1,93 @@
 [
   {
+    "role": "full-stack",
+    "status": "internal",
+    "url": "",
+    "links": [],
+    "image": "none",
+    "screenshots": [],
+    "featured": true,
+    "slug": "escaflow",
+    "title": "EscaFlow",
+    "tagline": "AI escalator safety, deployed in Baku Metro.",
+    "description": "An AI escalator-safety platform that detects crowd density, unsafe movement and falls from live camera feeds, with analyst and dispatcher dashboards for human-in-the-loop alerts.",
+    "longDescription": "EscaFlow watches live escalator camera feeds and flags risks in real time – crowd density, unsafe movement, falls – using YOLO and OpenCV models in Python. Alerts flow into analyst and dispatcher dashboards (Laravel API, Next.js front-end) where a human confirms and acts on them. I built the full system; it won 1st place at the Baku Metro Hackathon 2026 with team KhatAI and is now deployed in Baku Metro. It runs inside the metro network, so there is no public demo.",
+    "stack": [
+      "Python",
+      "YOLO",
+      "OpenCV",
+      "Laravel",
+      "Next.js",
+      "TypeScript"
+    ],
+    "accent": "#e8590c"
+  },
+  {
     "slug": "fermachi",
     "title": "Fermachi",
     "tagline": "Azerbaijan's marketplace for farm machinery, services & produce.",
     "role": "full-stack",
     "status": "live",
     "description": "A trilingual agricultural marketplace where anyone can rent out farm machinery, hire field services, and buy or sell produce from a single account.",
-    "longDescription": "Fermachi lets Azerbaijani farmers and providers list and book agricultural machinery, field services, and goods through one unified account – with a server-enforced booking flow, escrow-style payments and platform commission, bidirectional reviews, real-time chat and notifications, and an AI assistant. It's built as a four-part polyrepo: a Laravel 11 REST + WebSocket API on PostgreSQL, a Next.js 16 app dashboard, a Next.js marketing site, and an Expo / React Native mobile client shipping soon.",
-    "stack": ["Laravel", "PostgreSQL", "Next.js", "React", "TypeScript", "Expo", "Reverb"],
+    "longDescription": "Fermachi lets Azerbaijani farmers and providers list and book agricultural machinery, field services, and goods through one unified account – with a server-enforced booking flow, escrow-style payments and platform commission, bidirectional reviews, real-time chat and notifications, and an AI assistant. It's built as a four-part polyrepo: a Laravel 11 REST + WebSocket API on PostgreSQL, a Next.js 16 app dashboard, a Next.js marketing site, and an Expo / React Native mobile client shipping soon. It also runs live auctions, and ships FermachiAI – an AI agronomist that advises on planting, crop treatment and prices. I'm co-founder, CTO and sole developer.",
+    "stack": [
+      "Laravel",
+      "PostgreSQL",
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Expo",
+      "Reverb",
+      "LLM APIs"
+    ],
     "url": "https://fermachi.com/",
     "links": [
-      { "label": "Landing", "url": "https://fermachi.com/" },
-      { "label": "App", "url": "https://app.fermachi.com/" }
+      {
+        "label": "Landing",
+        "url": "https://fermachi.com/"
+      },
+      {
+        "label": "App",
+        "url": "https://app.fermachi.com/"
+      }
     ],
     "image": "",
     "screenshots": [],
     "accent": "#2f9e44",
     "featured": true
+  },
+  {
+    "role": "full-stack",
+    "status": "live",
+    "url": "https://jabish.az/",
+    "links": [
+      {
+        "label": "Landing",
+        "url": "https://jabish.az/"
+      },
+      {
+        "label": "App",
+        "url": "https://app.jabish.az/"
+      }
+    ],
+    "image": "",
+    "screenshots": [],
+    "featured": true,
+    "slug": "jabish",
+    "title": "Jabish",
+    "tagline": "AI-assisted teaching, and a way to find the right tutor.",
+    "description": "An EdTech platform where teachers create exams, homework and lessons with AI, and students find tutors by subject, level and city.",
+    "longDescription": "Jabish is an EdTech platform I co-founded and build as CTO and sole developer. Teachers generate exams, homework and lessons with LLMs and edit them before publishing; students search for tutors by subject, level and city. Built and deployed end to end – Laravel API on PostgreSQL, Next.js front-ends, shipped with Docker, Nginx and CI/CD.",
+    "stack": [
+      "Laravel",
+      "PostgreSQL",
+      "Next.js",
+      "TypeScript",
+      "LLM APIs",
+      "Docker",
+      "Nginx"
+    ],
+    "accent": "#f59f00"
   },
   {
     "slug": "portfelim",
@@ -26,16 +97,90 @@
     "status": "live",
     "description": "A multilingual, credit-based platform that turns a teacher's photos, PDFs or slides into editable AI-generated exams, quizzes and answer keys – with AI grading and PDF/DOCX export.",
     "longDescription": "Teachers upload material, pick question types, difficulty and language, and a multimodal LLM returns a strict-JSON exam plus answer key they edit in a rich TipTap/KaTeX editor before exporting to PDF or DOCX; the same AI grades open-ended answers and generates study materials. Built as a Laravel 13 API (Sanctum, PostgreSQL, queued jobs) with two Next.js 16 front-ends – the app and a separate marketing site.",
-    "stack": ["Laravel", "PostgreSQL", "Next.js", "React", "TypeScript", "OpenRouter"],
+    "stack": [
+      "Laravel",
+      "PostgreSQL",
+      "Next.js",
+      "React",
+      "TypeScript",
+      "OpenRouter"
+    ],
     "url": "https://farida-ai-frontend.vercel.app/",
     "links": [
-      { "label": "App", "url": "https://farida-ai-frontend.vercel.app/" },
-      { "label": "Landing", "url": "https://farida-ai-landing.vercel.app/" }
+      {
+        "label": "App",
+        "url": "https://farida-ai-frontend.vercel.app/"
+      },
+      {
+        "label": "Landing",
+        "url": "https://farida-ai-landing.vercel.app/"
+      }
     ],
     "image": "",
     "screenshots": [],
     "accent": "#6741d9",
     "featured": true
+  },
+  {
+    "slug": "vevy-product-ai",
+    "title": "Vevy Product AI",
+    "tagline": "AI-powered Shopify app for product descriptions.",
+    "role": "full-stack",
+    "status": "live",
+    "description": "AI-powered Shopify app for automated product-description generation.",
+    "longDescription": "A Shopify app that generates product descriptions with AI. Built full-stack in Laravel: OAuth against the Shopify Admin API, billing, store data sync, and the generation pipeline that turns sparse product fields into copy a merchant will actually keep. Live on the Shopify App Store.",
+    "stack": [
+      "Laravel",
+      "PHP",
+      "Shopify API",
+      "MySQL",
+      "LLM APIs"
+    ],
+    "url": "https://apps.shopify.com/vevy-ai-product-description",
+    "links": [
+      {
+        "label": "Shopify App Store",
+        "url": "https://apps.shopify.com/vevy-ai-product-description"
+      }
+    ],
+    "image": "",
+    "screenshots": [],
+    "accent": "#7c3aed",
+    "featured": true
+  },
+  {
+    "role": "full-stack",
+    "status": "live",
+    "url": "https://apps.shopify.com/quantity-x-volume-discounts",
+    "links": [
+      {
+        "label": "QX",
+        "url": "https://apps.shopify.com/quantity-x-volume-discounts"
+      },
+      {
+        "label": "SLOT",
+        "url": "https://apps.shopify.com/messenger-appointments"
+      },
+      {
+        "label": "RecurrinGO!",
+        "url": "https://apps.shopify.com/recurring-invoices"
+      }
+    ],
+    "image": "",
+    "screenshots": [],
+    "featured": false,
+    "slug": "shopify-apps",
+    "title": "Shopify Apps: QX, SLOT, RecurrinGO!",
+    "tagline": "Discounts, bookings and subscriptions on the Shopify App Store.",
+    "description": "Contributions to three live Shopify App Store apps: QX (quantity discounts), SLOT (appointment booking) and RecurrinGO! (subscriptions).",
+    "longDescription": "Alongside building vevy, I contributed to three production Shopify apps that are live on the Shopify App Store: QX for quantity discounts, SLOT for appointment booking, and RecurrinGO! for subscriptions. Work spanned Laravel back-ends, Shopify Admin API integration and MySQL data models.",
+    "stack": [
+      "Laravel",
+      "PHP",
+      "Shopify API",
+      "MySQL"
+    ],
+    "accent": "#5c940d"
   },
   {
     "slug": "youcansupport",
@@ -45,11 +190,22 @@
     "status": "live",
     "description": "A platform that lets businesses create and organize help-center articles, fully customize their knowledge base, and publish it on their own domain.",
     "longDescription": "YouCanSupport is a full knowledge-base product: a Laravel application where teams write and organize help-center articles, customize branding, and serve the result on their own domain, fronted by a fast Astro marketing site. I worked across the whole thing – the data model and API in Laravel/MySQL, and the content-first landing page in Astro.",
-    "stack": ["Laravel", "PHP", "Astro", "MySQL"],
+    "stack": [
+      "Laravel",
+      "PHP",
+      "Astro",
+      "MySQL"
+    ],
     "url": "https://www.youcansupport.com/",
     "links": [
-      { "label": "Landing", "url": "https://www.youcansupport.com/" },
-      { "label": "App", "url": "https://app.youcansupport.com/" }
+      {
+        "label": "Landing",
+        "url": "https://www.youcansupport.com/"
+      },
+      {
+        "label": "App",
+        "url": "https://app.youcansupport.com/"
+      }
     ],
     "image": "",
     "screenshots": [],
@@ -57,22 +213,25 @@
     "featured": true
   },
   {
-    "slug": "vevy-product-ai",
-    "title": "Vevy Product AI",
-    "tagline": "AI-powered Shopify app for product descriptions.",
     "role": "full-stack",
-    "status": "in progress",
-    "description": "AI-powered Shopify app for automated product-description generation.",
-    "longDescription": "A Shopify app that generates product descriptions with AI. Built full-stack in Laravel: OAuth against the Shopify Admin API, billing, store data sync, and the generation pipeline that turns sparse product fields into copy a merchant will actually keep. Currently in active development.",
-    "stack": ["Laravel", "PHP", "Shopify API", "MySQL"],
-    "url": "https://apps.shopify.com/vevy-ai-product-description",
-    "links": [
-      { "label": "Shopify App Store", "url": "https://apps.shopify.com/vevy-ai-product-description" }
-    ],
-    "image": "",
+    "status": "live",
+    "url": "",
+    "links": [],
+    "image": "none",
     "screenshots": [],
-    "accent": "#7c3aed",
-    "featured": true
+    "featured": false,
+    "slug": "access-control",
+    "title": "Facial-Recognition Access Control",
+    "tagline": "Hikvision access control for 570+ daily users.",
+    "description": "Maintenance and improvement of a Hikvision facial-recognition access-control system (Next.js + Laravel) at Megasec, plus a second isolated deployment for another company.",
+    "longDescription": "At Megasec I maintain and improve a Hikvision facial-recognition access-control system built on Next.js and Laravel, used by 420+ people daily. I also deployed a second instance on another company's isolated server, locked to their own devices, serving 150+ daily users.",
+    "stack": [
+      "Next.js",
+      "Laravel",
+      "PHP",
+      "Hikvision"
+    ],
+    "accent": "#495057"
   },
   {
     "slug": "business-management-systems",
@@ -80,12 +239,19 @@
     "tagline": "Internal ops & automation on the Google Apps Script API.",
     "role": "full-stack",
     "status": "live",
-    "description": "Internal management, workflow automation, and operational systems for education and hospitality businesses, integrating Google Apps Script APIs to streamline admin work.",
+    "description": "Internal management, workflow automation, and operational systems for investment, IT, education and hospitality businesses, integrating Google Apps Script APIs to streamline admin work.",
     "longDescription": "A set of internal tools for education and hospitality businesses, built in Next.js on top of the Google Apps Script API. Turns spreadsheet-driven processes into real interfaces – workflow automation, operational dashboards, and the day-to-day surfaces staff actually run on.",
-    "stack": ["Next.js", "TypeScript", "Google Apps Script"],
+    "stack": [
+      "Next.js",
+      "TypeScript",
+      "Google Apps Script"
+    ],
     "url": "https://entesk-google-platform.vercel.app/",
     "links": [
-      { "label": "Live demo", "url": "https://entesk-google-platform.vercel.app/" }
+      {
+        "label": "Live demo",
+        "url": "https://entesk-google-platform.vercel.app/"
+      }
     ],
     "image": "",
     "screenshots": [],
@@ -100,32 +266,21 @@
     "status": "live",
     "description": "Backend services and APIs for an investment company's CRM and internal management platform.",
     "longDescription": "The backend behind an investment company's CRM and internal management platform – Node.js and Express over MongoDB. API design, data modelling, and the quiet reliability work that everything else depends on.",
-    "stack": ["Node.js", "Express", "MongoDB"],
+    "stack": [
+      "Node.js",
+      "Express",
+      "MongoDB"
+    ],
     "url": "https://cpm.blink-bi.az/",
     "links": [
-      { "label": "Live", "url": "https://cpm.blink-bi.az/" }
+      {
+        "label": "Live",
+        "url": "https://cpm.blink-bi.az/"
+      }
     ],
     "image": "none",
     "screenshots": [],
     "accent": "#ed7c2d",
-    "featured": false
-  },
-  {
-    "slug": "novarc-media",
-    "title": "NOVARC Media",
-    "tagline": "Futuristic, scroll-driven site for a media company.",
-    "role": "frontend",
-    "status": "live",
-    "description": "Futuristic frontend with interactive scrolling for a media company.",
-    "longDescription": "A media-company site built in Next.js, leaning on interactive scrolling and motion to carry the brand. Front-end focused: animation, layout, and the kind of scroll choreography that has to feel weightless.",
-    "stack": ["Next.js", "Tailwind"],
-    "url": "https://novarc-media.vercel.app/",
-    "links": [
-      { "label": "Live demo", "url": "https://novarc-media.vercel.app/" }
-    ],
-    "image": "",
-    "screenshots": [],
-    "accent": "#c63d63",
     "featured": false
   },
   {
@@ -136,15 +291,93 @@
     "status": "live",
     "description": "Corporate landing page focused on responsive UI and SEO optimization.",
     "longDescription": "A corporate landing page in Next.js for a construction firm – responsive UI, clean structure, and SEO optimization. The kind of site whose whole job is to load fast, read clearly, and convert.",
-    "stack": ["Next.js", "Tailwind"],
+    "stack": [
+      "Next.js",
+      "Tailwind"
+    ],
     "url": "https://capital-construction-xi.vercel.app/",
     "links": [
-      { "label": "Live demo", "url": "https://capital-construction-xi.vercel.app/" }
+      {
+        "label": "Live demo",
+        "url": "https://capital-construction-xi.vercel.app/"
+      }
     ],
     "image": "",
     "screenshots": [],
     "accent": "#2563ff",
     "featured": false
+  },
+  {
+    "slug": "novarc-media",
+    "title": "NOVARC Media",
+    "tagline": "Futuristic, scroll-driven site for a media company.",
+    "role": "frontend",
+    "status": "live",
+    "description": "Futuristic frontend with interactive scrolling for a media company.",
+    "longDescription": "A media-company site built in Next.js, leaning on interactive scrolling and motion to carry the brand. Front-end focused: animation, layout, and the kind of scroll choreography that has to feel weightless.",
+    "stack": [
+      "Next.js",
+      "Tailwind"
+    ],
+    "url": "https://novarc-media.vercel.app/",
+    "links": [
+      {
+        "label": "Live demo",
+        "url": "https://novarc-media.vercel.app/"
+      }
+    ],
+    "image": "",
+    "screenshots": [],
+    "accent": "#c63d63",
+    "featured": false
+  },
+  {
+    "role": "frontend",
+    "status": "live",
+    "url": "https://citrusvalley.az/",
+    "links": [
+      {
+        "label": "Live",
+        "url": "https://citrusvalley.az/"
+      }
+    ],
+    "image": "",
+    "screenshots": [],
+    "featured": false,
+    "slug": "citrus-valley",
+    "title": "Citrus Valley",
+    "tagline": "Marketing site for Citrus Valley.",
+    "description": "Marketing website delivered for Citrus Valley.",
+    "longDescription": "A marketing website delivered for Citrus Valley as freelance work – front-end focused, responsive, and built to load fast.",
+    "stack": [
+      "Next.js",
+      "Tailwind"
+    ],
+    "accent": "#fab005"
+  },
+  {
+    "role": "frontend",
+    "status": "live",
+    "url": "https://grinduck.com/",
+    "links": [
+      {
+        "label": "Live",
+        "url": "https://grinduck.com/"
+      }
+    ],
+    "image": "",
+    "screenshots": [],
+    "featured": false,
+    "slug": "grinduck",
+    "title": "Grinduck",
+    "tagline": "Marketing site for Grinduck.",
+    "description": "Marketing website delivered for Grinduck.",
+    "longDescription": "A marketing website delivered for Grinduck as freelance work – front-end focused, responsive, and built to load fast.",
+    "stack": [
+      "Next.js",
+      "Tailwind"
+    ],
+    "accent": "#228be6"
   },
   {
     "slug": "remind-notification",
@@ -154,10 +387,16 @@
     "status": "live",
     "description": "Landing page for a reminder / notification product, built in Astro.",
     "longDescription": "A lean, static landing page for a reminder and notification product – built in Astro for instant loads and easy upkeep. Front-end focused: clean layout, quick delivery, no moving parts to maintain.",
-    "stack": ["Astro", "Tailwind"],
+    "stack": [
+      "Astro",
+      "Tailwind"
+    ],
     "url": "https://www.remindnotification.com/",
     "links": [
-      { "label": "Live", "url": "https://www.remindnotification.com/" }
+      {
+        "label": "Live",
+        "url": "https://www.remindnotification.com/"
+      }
     ],
     "image": "",
     "screenshots": [],
