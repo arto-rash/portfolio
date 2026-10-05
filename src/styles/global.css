@@ -334,6 +334,16 @@ html.theme-anim, html.theme-anim *, html.theme-anim *::before, html.theme-anim *
   transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease, box-shadow 300ms ease !important;
 }
 
+/* nav links: a marker underline scribbles in on hover */
+.nav-link {
+  background-image: linear-gradient(var(--color-accent), var(--color-accent));
+  background-repeat: no-repeat;
+  background-position: 0 92%;
+  background-size: 0% 2px;
+  transition: background-size 220ms ease, color 200ms ease;
+}
+.nav-link:hover { background-size: 100% 2px; }
+
 /* ---------- Logbook pieces ---------- */
 .hand { font-family: var(--font-display); }
 

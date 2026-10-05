@@ -16,9 +16,9 @@ const links = [
     <a href="/" class="text-ink whitespace-nowrap">
       logbook <span class="text-ink-faint">· a. rashid</span>
     </a>
-    <nav class="flex items-center gap-4 sm:gap-6 text-ink-faint">
+    <nav class="flex items-center gap-4 sm:gap-7 font-display text-[17px] normal-case tracking-normal text-ink-soft">
       {links.map((l, i) => (
-        <a href={l.href} class:list={["hover:text-accent transition-colors", i === 3 && "hidden sm:inline"]}>{l.label}</a>
+        <a href={l.href} class:list={["nav-link hover:text-accent transition-colors", i === 3 && "hidden sm:inline"]}>{l.label}</a>
       ))}
     </nav>
     <button type="button" class="theme-switch" role="switch" aria-checked="false" aria-label="Blueprint mode" data-theme-switch>

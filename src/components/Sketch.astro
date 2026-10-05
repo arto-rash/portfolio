@@ -62,12 +62,47 @@ const cls = draw ? "sketch draw" : "sketch";
 )}
 
 {slug === "rover" && (
-  <svg class={cls} viewBox="0 0 300 112" role="img" aria-label="Sketch of a rover">
-    <text class="m" x="176" y="18">first team from AZ</text>
-    <path d="M60 64 L110 44 H200 L232 64 Z" />
-    <circle cx="86" cy="82" r="18" /><circle cx="86" cy="82" r="4" />
-    <circle cx="206" cy="82" r="18" /><circle cx="206" cy="82" r="4" />
-    <path d="M150 44 V22 H170" />
-    <path d="M40 102 H260" stroke-dasharray="2 6" />
+  <svg class={cls} viewBox="0 0 300 112" role="img" aria-label="Side view of a two-person, pedal-powered rover crossing rough ground toward a crater">
+    <text class="m" x="122" y="12">first team from AZ</text>
+    <path class="m" d="M119 8 C 112 4, 104 5, 97 10" />
+    <path class="m" d="M101 6 L97 10 L102 12" />
+    <text x="8" y="50">2 pilots,</text>
+    <text x="8" y="62">pedal power</text>
+
+    {/* flag on a mast, waving back */}
+    <path d="M93 70 L88 10" />
+    <path class="m" d="M88 10 C 80 9, 74 15, 66 13 L 70 20 C 77 22, 82 17, 88.6 18" />
+
+    {/* ground, a rock behind, a crater ahead */}
+    <path d="M6 102 H238 C 244 102, 246 109, 254 109 C 262 109, 264 102, 270 102 H294" />
+    <path d="M34 102 l4 -5 l6 1 l3 4" />
+    <path d="M276 102 l3 -4 l5 0 l2 4" />
+    <text x="252" y="94">crater</text>
+    <path d="M28 76 h16 M22 84 h20 M28 92 h16" stroke-dasharray="4 3" />
+
+    {/* far-side wheels peeking out: it's a four-wheeler */}
+    <circle cx="86" cy="82" r="18" stroke-dasharray="2 4" />
+    <circle cx="222" cy="82" r="18" stroke-dasharray="2 4" />
+
+    {/* wheels with spokes */}
+    <circle cx="78" cy="84" r="18" />
+    <circle cx="78" cy="84" r="3" />
+    <path d="M78 66 V102 M60 84 H96 M65 71 L91 97 M91 71 L65 97" />
+    <circle cx="214" cy="84" r="18" />
+    <circle cx="214" cy="84" r="3" />
+    <path d="M214 66 V102 M196 84 H232 M201 71 L227 97 M227 71 L201 97" />
+
+    {/* chassis, seats, cranks, steering */}
+    <path d="M78 84 L124 86 L170 86 L214 84 M78 84 L108 56 L124 86 M154 56 L170 86 M108 56 L200 54 L214 84" />
+    <path d="M100 56 h14 M146 56 h14" />
+    <circle cx="124" cy="86" r="5" />
+    <circle cx="170" cy="86" r="5" />
+    <path d="M200 54 L196 42 H188" />
+
+    {/* pilots */}
+    <circle cx="110" cy="26" r="6" />
+    <path d="M110 32 L106 54 M109 38 L126 46 L134 51 M106 54 L126 68 L127 90" />
+    <circle cx="156" cy="26" r="6" />
+    <path d="M156 32 L152 54 M155 38 L176 42 L188 42 M152 54 L172 68 L173 90" />
   </svg>
 )}
