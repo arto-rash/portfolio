@@ -1,0 +1,38 @@
+---
+// One logbook entry card. Flagships are large and carry a sketch; the rest are compact.
+import Sketch from "./Sketch.astro";
+
+interface Props {
+  href?: string;
+  slug: string;
+  title: string;
+  description: string;
+  stack?: string[];
+  period?: string;
+  stamp?: string;
+  label?: string;
+  large?: boolean;
+}
+const { href, slug, title, description, stack = [], period = "", stamp = "", label = "", large = false } = Astro.props;
+const Tag = href ? "a" : "article";
+---
+
+<div data-reveal class="h-full">
+<Tag href={href} class:list={["entry block h-full", large ? "p-5 md:p-6" : "p-4 md:p-5"]}>
+  {stamp && <span class="stamp">{stamp}</span>}
+  <div class="flex justify-between gap-3 font-mono text-[11px] uppercase tracking-[0.1em] text-ink-faint">
+    <span>{label}</span>
+    {period && <span class="tabular">{period}</span>}
+  </div>
+  <h3 class:list={["font-display leading-[1.05] mt-2", large ? "text-[30px] md:text-[34px]" : "text-[24px]"]}>{title}</h3>
+  {large && (
+    <div class="my-3">
+      <Sketch slug={slug} draw />
+    </div>
+  )}
+  <p class:list={["mt-2 leading-[1.5] text-ink-soft", large ? "text-[15px]" : "text-[14px]"]}>{description}</p>
+  {stack.length > 0 && (
+    <p class="mt-3 font-mono text-[11px] text-ink-faint">{stack.slice(0, 4).join(" · ").toLowerCase()}</p>
+  )}
+</Tag>
+</div>

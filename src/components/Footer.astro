@@ -1,11 +1,23 @@
 ---
+import music from "../data/music.json";
 const year = new Date().getFullYear();
+const sotd = music.songOfTheDay;
 ---
 
-<footer class="border-t border-rule px-5 md:px-8 py-8">
-  <div class="mx-auto max-w-6xl flex flex-wrap items-center justify-between gap-3 font-mono text-[10.5px] uppercase tracking-[0.14em] text-ink-faint">
-    <span>© {year} – artoghrul rashid</span>
-    <span>built with astro · tailwind · attention</span>
-    <span>baku</span>
+<footer class="border-t-2 border-ink px-5 md:px-8 py-8 bg-bg">
+  <div class="mx-auto max-w-5xl flex flex-wrap items-center justify-between gap-x-6 gap-y-3 font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint">
+    <span>© {year} · artoghrul rashid · baku</span>
+    {sotd.title && (
+      <a
+        id="hero-sotd"
+        href={sotd.url || "#"}
+        target="_blank"
+        rel="noreferrer"
+        title="song of the day"
+        class="hover:text-accent transition-colors normal-case tracking-normal"
+        style={sotd.url ? undefined : "pointer-events:none"}
+      >♪ on the desk: <span id="hero-sotd-title">{sotd.title}</span></a>
+    )}
+    <span>drawn with astro · tailwind · a pencil</span>
   </div>
 </footer>

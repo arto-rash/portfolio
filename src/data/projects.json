@@ -6,7 +6,6 @@
     "links": [],
     "image": "none",
     "screenshots": [],
-    "featured": true,
     "slug": "escaflow",
     "title": "EscaFlow",
     "tagline": "AI escalator safety, deployed in Baku Metro.",
@@ -20,7 +19,11 @@
       "Next.js",
       "TypeScript"
     ],
-    "accent": "#e8590c"
+    "accent": "#e8590c",
+    "tier": "flagship",
+    "period": "2026",
+    "stamp": "deployed · Baku Metro",
+    "featured": true
   },
   {
     "slug": "fermachi",
@@ -54,6 +57,9 @@
     "image": "",
     "screenshots": [],
     "accent": "#2f9e44",
+    "tier": "flagship",
+    "period": "",
+    "stamp": "co-founder · CTO",
     "featured": true
   },
   {
@@ -72,7 +78,6 @@
     ],
     "image": "",
     "screenshots": [],
-    "featured": true,
     "slug": "jabish",
     "title": "Jabish",
     "tagline": "AI-assisted teaching, and a way to find the right tutor.",
@@ -87,7 +92,11 @@
       "Docker",
       "Nginx"
     ],
-    "accent": "#f59f00"
+    "accent": "#f59f00",
+    "tier": "flagship",
+    "period": "",
+    "stamp": "co-founder · CTO",
+    "featured": true
   },
   {
     "slug": "portfelim",
@@ -119,6 +128,9 @@
     "image": "",
     "screenshots": [],
     "accent": "#6741d9",
+    "tier": "shipped",
+    "period": "",
+    "stamp": "",
     "featured": true
   },
   {
@@ -146,6 +158,9 @@
     "image": "",
     "screenshots": [],
     "accent": "#7c3aed",
+    "tier": "shipped",
+    "period": "",
+    "stamp": "on Shopify",
     "featured": true
   },
   {
@@ -168,7 +183,6 @@
     ],
     "image": "",
     "screenshots": [],
-    "featured": false,
     "slug": "shopify-apps",
     "title": "Shopify Apps: QX, SLOT, RecurrinGO!",
     "tagline": "Discounts, bookings and subscriptions on the Shopify App Store.",
@@ -180,7 +194,11 @@
       "Shopify API",
       "MySQL"
     ],
-    "accent": "#5c940d"
+    "accent": "#5c940d",
+    "tier": "shipped",
+    "period": "",
+    "stamp": "on Shopify",
+    "featured": false
   },
   {
     "slug": "youcansupport",
@@ -210,6 +228,9 @@
     "image": "",
     "screenshots": [],
     "accent": "#1d4fff",
+    "tier": "shipped",
+    "period": "",
+    "stamp": "",
     "featured": true
   },
   {
@@ -219,7 +240,6 @@
     "links": [],
     "image": "none",
     "screenshots": [],
-    "featured": false,
     "slug": "access-control",
     "title": "Facial-Recognition Access Control",
     "tagline": "Hikvision access control for 570+ daily users.",
@@ -231,7 +251,11 @@
       "PHP",
       "Hikvision"
     ],
-    "accent": "#495057"
+    "accent": "#495057",
+    "tier": "shipped",
+    "period": "2025–",
+    "stamp": "570+ daily users",
+    "featured": false
   },
   {
     "slug": "business-management-systems",
@@ -256,6 +280,9 @@
     "image": "",
     "screenshots": [],
     "accent": "#0d9488",
+    "tier": "shipped",
+    "period": "",
+    "stamp": "",
     "featured": true
   },
   {
@@ -281,6 +308,9 @@
     "image": "none",
     "screenshots": [],
     "accent": "#ed7c2d",
+    "tier": "shipped",
+    "period": "",
+    "stamp": "",
     "featured": false
   },
   {
@@ -305,6 +335,9 @@
     "image": "",
     "screenshots": [],
     "accent": "#2563ff",
+    "tier": "client",
+    "period": "",
+    "stamp": "",
     "featured": false
   },
   {
@@ -329,6 +362,9 @@
     "image": "",
     "screenshots": [],
     "accent": "#c63d63",
+    "tier": "client",
+    "period": "",
+    "stamp": "",
     "featured": false
   },
   {
@@ -343,7 +379,6 @@
     ],
     "image": "",
     "screenshots": [],
-    "featured": false,
     "slug": "citrus-valley",
     "title": "Citrus Valley",
     "tagline": "Marketing site for Citrus Valley.",
@@ -353,7 +388,11 @@
       "Next.js",
       "Tailwind"
     ],
-    "accent": "#fab005"
+    "accent": "#fab005",
+    "tier": "client",
+    "period": "",
+    "stamp": "",
+    "featured": false
   },
   {
     "role": "frontend",
@@ -367,7 +406,6 @@
     ],
     "image": "",
     "screenshots": [],
-    "featured": false,
     "slug": "grinduck",
     "title": "Grinduck",
     "tagline": "Marketing site for Grinduck.",
@@ -377,7 +415,11 @@
       "Next.js",
       "Tailwind"
     ],
-    "accent": "#228be6"
+    "accent": "#228be6",
+    "tier": "client",
+    "period": "",
+    "stamp": "",
+    "featured": false
   },
   {
     "slug": "remind-notification",
@@ -401,6 +443,9 @@
     "image": "",
     "screenshots": [],
     "accent": "#0891b2",
+    "tier": "client",
+    "period": "",
+    "stamp": "",
     "featured": false
   }
 ]

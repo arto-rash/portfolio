@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import Nav from "../../components/Nav.astro";
 import Footer from "../../components/Footer.astro";
+import Sketch from "../../components/Sketch.astro";
 import projects from "../../data/projects.json";
 import { resolveProjectImages } from "../../lib/og";
 import Slideshow from "../../components/Slideshow.astro";
@@ -33,72 +34,85 @@ const links = project.links?.length
   : project.url
     ? [{ label: "Live", url: project.url }]
     : [];
+
+const hasSketch = ["escaflow", "fermachi", "jabish"].includes(project.slug);
 ---
 
 <Layout title={`${project.title} – Artoghrul Rashid`} description={project.description}>
   <Nav showHome />
-  <main id="main" class="pt-32 pb-24 px-5 md:px-8">
-    <article class="mx-auto max-w-4xl">
-      <a href="/#work" class="link-arrow font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:text-ink transition-colors">
-        <span class="arrow">←</span><span>all work</span>
+  <main id="main" class="pt-28 md:pt-32 pb-24 px-5 md:px-8">
+    <article class="mx-auto max-w-5xl">
+      <a href="/#work" class="link-arrow font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint hover:text-accent transition-colors">
+        <span class="arrow">←</span><span>back to the logbook</span>
       </a>
 
-      <header class="mt-10 mb-10">
-        <div class="flex flex-wrap items-center gap-3 eyebrow mb-5">
-          <span class={project.status === "live" ? "text-accent" : undefined}>{project.status}</span>
-          <span class="text-ink-dim">·</span>
-          <span>{project.role}</span>
+      <header class="mt-10 mb-10 grid grid-cols-12 gap-x-8 gap-y-6 items-end">
+        <div class="col-span-12 md:col-span-8">
+          <div class="flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint mb-4">
+            <span class={project.status === "live" ? "text-accent" : undefined}>● {project.status}</span>
+            <span>·</span>
+            <span>{project.role}</span>
+            {project.period && <><span>·</span><span class="tabular">{project.period}</span></>}
+          </div>
+          <h1 class="font-display text-[clamp(44px,8vw,88px)] leading-[1]" data-reveal>{project.title}</h1>
+          <p class="mt-5 text-[17px] md:text-[19px] leading-[1.5] text-ink-soft max-w-[52ch]" data-reveal style="--reveal-delay:80ms">
+            {project.tagline}
+          </p>
         </div>
-        <h1 class="font-display font-semibold tracking-[-0.03em] text-[clamp(40px,7vw,76px)] leading-[1.02]" data-reveal>
-          {project.title}
-        </h1>
-        <p class="mt-5 text-[17px] md:text-[20px] leading-[1.5] text-ink-soft max-w-[60ch]" data-reveal style="--reveal-delay:80ms">
-          {project.tagline}
-        </p>
+        <div class="col-span-12 md:col-span-4 flex md:justify-end">
+          {project.stamp && <span class="stamp stamp-inline text-[12px]">{project.stamp}</span>}
+        </div>
+      </header>
 
-        <div class="mt-8 flex flex-wrap items-center gap-3" data-reveal style="--reveal-delay:160ms">
+      {links.length > 0 && (
+        <div class="mb-12 flex flex-wrap items-center gap-3" data-reveal>
           {links.map((l, i) => (
             <a href={l.url} target="_blank" rel="noreferrer" class:list={["btn", i === 0 && "btn-primary"]}>
               {l.label} ↗
             </a>
           ))}
         </div>
-      </header>
+      )}
 
-      {/* Gallery – slideshow when there are multiple shots, single image otherwise */}
+      {hasSketch && (
+        <figure class="entry p-5 md:p-8 mb-12" data-reveal>
+          <figcaption class="font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint mb-4">fig. 1 · how it works</figcaption>
+          <div class="max-w-2xl mx-auto"><Sketch slug={project.slug} draw /></div>
+        </figure>
+      )}
+
       {gallery.length > 0 && (
-        <div class="mb-12" data-reveal>
+        <div class="entry p-2 mb-12" data-reveal>
           <Slideshow images={gallery} alt={project.title} ratio="aspect-[16/10]" />
         </div>
       )}
 
-      {/* Body */}
       <div class="grid grid-cols-1 md:grid-cols-12 gap-x-10 gap-y-8">
-        <div class="md:col-span-8">
-          <p class="text-[16.5px] leading-[1.75] text-ink-soft">{project.longDescription ?? project.description}</p>
+        <div class="md:col-span-8 min-w-0">
+          <p class="text-[16.5px] leading-[1.8] text-ink-soft">{project.longDescription ?? project.description}</p>
         </div>
-        <aside class="md:col-span-4 space-y-6">
+        <aside class="md:col-span-4 md:border-l-2 md:border-dashed md:border-rule-hi md:pl-6 space-y-6">
           <div>
-            <div class="eyebrow mb-2.5">stack</div>
+            <div class="scrawl text-[18px] mb-2">built with</div>
             <ul class="flex flex-wrap gap-2">
               {project.stack.map((s) => <li class="tag">{s}</li>)}
             </ul>
           </div>
           <div>
-            <div class="eyebrow mb-2.5">role</div>
+            <div class="scrawl text-[18px] mb-1">my part</div>
             <div class="font-mono text-[12.5px] text-ink-soft">{project.role}</div>
           </div>
         </aside>
       </div>
 
-      <hr class="my-14" />
+      <hr class="my-14 border-t-2 border-ink" />
 
-      <nav class="flex items-center justify-between gap-6 font-mono text-[11px] uppercase tracking-[0.14em]">
-        <a href={`/work/${prev.slug}`} class="link-arrow text-ink-faint hover:text-ink transition-colors">
-          <span class="arrow">←</span><span>{prev.title}</span>
+      <nav class="flex items-center justify-between gap-6">
+        <a href={`/work/${prev.slug}`} class="link-arrow text-ink-faint hover:text-accent transition-colors min-w-0">
+          <span class="arrow font-mono">←</span><span class="font-display text-[20px] truncate">{prev.title}</span>
         </a>
-        <a href={`/work/${next.slug}`} class="link-arrow text-ink-faint hover:text-ink transition-colors text-right">
-          <span>{next.title}</span><span class="arrow">→</span>
+        <a href={`/work/${next.slug}`} class="link-arrow text-ink-faint hover:text-accent transition-colors text-right min-w-0">
+          <span class="font-display text-[20px] truncate">{next.title}</span><span class="arrow font-mono">→</span>
         </a>
       </nav>
     </article>

@@ -2,11 +2,22 @@
 import Layout from "../layouts/Layout.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
+import Entry from "../components/Entry.astro";
 import profile from "../data/profile.json";
 import projects from "../data/projects.json";
-import music from "../data/music.json";
 
-const sotd = music.songOfTheDay;
+const flagships = projects.filter((p) => p.tier === "flagship");
+const shipped = projects.filter((p) => p.tier === "shipped");
+const clients = projects.filter((p) => p.tier === "client");
+
+const proof = [
+  "Deployed in Baku Metro",
+  "NASA HERC team captain",
+  "4 apps on the Shopify App Store",
+  "570+ daily users at Megasec",
+  "5× Robotex 1st place",
+];
+
 const socials = [
   { label: "github", href: profile.social.github },
   { label: "linkedin", href: profile.social.linkedin },
@@ -16,116 +27,118 @@ const socials = [
 <Layout>
   <Nav />
   <main id="main" class="px-5 md:px-8">
-    <div class="mx-auto max-w-4xl">
+    <div class="mx-auto max-w-5xl">
       {/* Hero */}
-      <section class="pt-28 md:pt-32 pb-12 md:pb-16">
+      <section class="pt-28 md:pt-36 pb-12 md:pb-16">
         <div class="grid grid-cols-12 gap-x-8 gap-y-8 items-start">
-          <div class="col-span-12 md:col-span-8">
-            <div
+          <div class="col-span-12 md:col-span-9">
+            <p
               id="availability"
-              class="eyebrow mb-6"
-              data-reveal
+              class="font-mono text-[11px] uppercase tracking-[0.12em] text-accent mb-6"
               style={profile.available ? undefined : "display:none"}
-            >available for {profile.availableFor}</div>
+            >● available for {profile.availableFor}</p>
 
-            <h1
-              class="font-display font-semibold tracking-[-0.03em] leading-[1] text-[clamp(40px,7vw,84px)]"
-              data-reveal
-              style="--reveal-delay:60ms"
-            >
-              Full-stack engineer.
+            <h1 class="font-display text-[clamp(40px,7vw,78px)] leading-[1.04] text-balance" data-reveal>
+              I build systems that <mark>leave the screen</mark>.
             </h1>
 
-            <p class="mt-6 text-[16px] md:text-[17.5px] leading-[1.7] text-ink-soft max-w-[48ch]" data-reveal style="--reveal-delay:140ms">
-              {profile.tagline}
+            <p class="mt-6 text-[16px] md:text-[17px] leading-[1.7] text-ink-soft max-w-[56ch]" data-reveal style="--reveal-delay:100ms">
+              Web platforms, AI cameras in a metro, a rover for NASA. I'm a full-stack engineer in Baku, co-founder and CTO of
+              Fermachi and Jabish, and a CS student at ADA University.
             </p>
-
-            <div class="mt-8 flex flex-wrap items-center gap-x-7 gap-y-3" data-reveal style="--reveal-delay:220ms">
-              <a href="/about" class="link-arrow font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:text-ink transition-colors">
-                <span>about</span><span class="arrow">→</span>
-              </a>
-              <a href="/blog" class="link-arrow font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:text-ink transition-colors">
-                <span>writing</span><span class="arrow">→</span>
-              </a>
-              {sotd.title && (
-                <a
-                  id="hero-sotd"
-                  href={sotd.url || "#"}
-                  target="_blank"
-                  rel="noreferrer"
-                  title="song of the day"
-                  class="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint hover:text-ink transition-colors"
-                  style={sotd.url ? undefined : "pointer-events:none"}
-                >♪&nbsp;<span id="hero-sotd-title">{sotd.title}</span></a>
-              )}
-            </div>
+            <p class="mt-3" data-reveal style="--reveal-delay:180ms">
+              <span class="scrawl text-[19px]">← mostly TypeScript, Next.js, Laravel and Postgres</span>
+            </p>
           </div>
 
-          <div class="col-span-12 md:col-span-4 flex md:justify-end" data-reveal style="--reveal-delay:120ms">
+          <div class="col-span-12 md:col-span-3 flex md:justify-end" data-reveal style="--reveal-delay:120ms">
             {profile.photo && (
-              <img
-                src={profile.photo}
-                alt={`${profile.name} portrait`}
-                class="w-[160px] md:w-[200px] aspect-[3/4] object-cover border border-rule"
-                loading="eager"
-                onerror="this.style.display='none'"
-              />
+              <figure class="entry p-2 pb-1 rotate-[2deg] w-[150px] md:w-[180px]">
+                <img
+                  src={profile.photo}
+                  alt={`${profile.name} portrait`}
+                  class="w-full aspect-[3/4] object-cover"
+                  loading="eager"
+                  onerror="this.closest('figure').style.display='none'"
+                />
+                <figcaption class="font-display text-[15px] text-center py-1">me, probably debugging</figcaption>
+              </figure>
             )}
           </div>
         </div>
+
+        <ul class="ticks mt-10 pt-5 border-t border-dashed border-rule-hi font-sans text-[14px] text-ink-soft" data-reveal style="--reveal-delay:220ms">
+          {proof.map((p) => <li>{p}</li>)}
+        </ul>
       </section>
 
       {/* Work */}
       <section id="work" class="pb-16 md:pb-20">
-        <div class="flex items-baseline justify-between border-b border-rule pb-4" data-reveal>
-          <h2 class="eyebrow">work</h2>
-          <span id="work-count" class="eyebrow tabular">{String(projects.length).padStart(2, "0")}</span>
+        <div class="flex items-baseline justify-between border-b-2 border-ink pb-2 mb-10" data-reveal>
+          <h2 class="font-display text-[28px]">Work</h2>
+          <span class="font-mono text-[11px] text-ink-faint tabular"><span id="work-count">{projects.length}</span> entries</span>
         </div>
-        <ul id="work-list">
-          {projects.map((p, i) => (
-            <li class="border-b border-rule">
-              <a href={`/work/${p.slug}`} class="work-row group flex items-baseline gap-4 py-4">
-                <span class="font-mono text-[11px] text-ink-faint tabular shrink-0">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 class="work-title font-display font-medium tracking-[-0.01em] text-[19px] md:text-[23px] leading-[1.15] shrink-0">
-                  {p.title}
-                </h3>
-                <span class="hidden sm:block flex-1 text-right text-[13px] text-ink-faint truncate">
-                  {p.tagline}
-                </span>
-                <span class="arrow font-mono text-ink-dim group-hover:text-ink transition-colors shrink-0">↗</span>
-              </a>
-            </li>
-          ))}
-        </ul>
+
+        <div id="work-list">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-7">
+            {flagships.map((p) => (
+              <Entry large href={`/work/${p.slug}`} slug={p.slug} title={p.title} description={p.description} stack={p.stack} period={p.period} stamp={p.stamp} label={p.role} />
+            ))}
+            <Entry
+              large
+              slug="rover"
+              title="NASA HERC rover"
+              description="Team captain of Azerbaijan's first team at NASA's Human Exploration Rover Challenge. One of 25 teams worldwide."
+              stack={["mechanics", "electronics", "team lead"]}
+              period="2025"
+              label="off the screen"
+            />
+          </div>
+
+          <h3 class="font-display text-[24px] mt-16 mb-6" data-reveal>Also shipped</h3>
+          <div class="shipped grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {shipped.map((p) => (
+              <Entry href={`/work/${p.slug}`} slug={p.slug} title={p.title} description={p.tagline} stack={p.stack} period={p.period} stamp={p.stamp} label={p.role} />
+            ))}
+          </div>
+
+          <h3 class="font-display text-[24px] mt-16 mb-4" data-reveal>Sites for clients</h3>
+          <ul class="border-t border-dashed border-rule-hi" data-reveal>
+            {clients.map((p) => (
+              <li class="border-b border-dashed border-rule-hi">
+                <a href={`/work/${p.slug}`} class="link-arrow flex w-full items-baseline gap-4 py-3 group">
+                  <span class="font-display text-[20px] shrink-0 group-hover:text-accent transition-colors">{p.title}</span>
+                  <span class="hidden sm:block flex-1 text-[13px] text-ink-faint truncate">{p.tagline}</span>
+                  <span class="arrow font-mono text-ink-faint ml-auto">→</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
       </section>
 
       {/* Contact */}
       <section id="contact" class="pb-20 md:pb-24">
-        <div class="border-b border-rule pb-4 mb-8" data-reveal>
-          <h2 class="eyebrow">contact</h2>
+        <div class="border-b-2 border-ink pb-2 mb-8" data-reveal>
+          <h2 class="font-display text-[28px]">Say hi</h2>
         </div>
         <a
           href={`mailto:${profile.social.email}`}
-          class="link-arrow font-display font-semibold tracking-[-0.02em] text-[clamp(22px,4vw,40px)] leading-[1.1] hover:text-ink-faint transition-colors"
+          class="link-arrow font-display text-[clamp(24px,4.4vw,44px)] leading-[1.1] hover:text-accent transition-colors break-all"
           data-reveal
         >
           <span>{profile.social.email}</span><span class="arrow">→</span>
         </a>
-        <ul class="mt-8 flex flex-wrap gap-x-7 gap-y-2 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint" data-reveal style="--reveal-delay:100ms">
+        <ul class="mt-8 flex flex-wrap gap-x-7 gap-y-2 font-mono text-[11px] uppercase tracking-[0.12em] text-ink-faint" data-reveal style="--reveal-delay:100ms">
           {socials.map((s) => (
             <li>
-              <a href={s.href} target="_blank" rel="noreferrer" class="link-arrow hover:text-ink transition-colors">
+              <a href={s.href} target="_blank" rel="noreferrer" class="link-arrow hover:text-accent transition-colors">
                 <span>{s.label}</span><span class="arrow">↗</span>
               </a>
             </li>
           ))}
           <li>
-            <a
-              href={`tel:${profile.social.phone.replace(/[^+\d]/g, "")}`}
-              class="hover:text-ink transition-colors"
-            >{profile.social.phone}</a>
+            <a href={`tel:${profile.social.phone.replace(/[^+\d]/g, "")}`} class="hover:text-accent transition-colors">{profile.social.phone}</a>
           </li>
         </ul>
       </section>
@@ -138,7 +151,7 @@ const socials = [
   // Live override from the Google Sheet (falls back to static content if unset).
   import { loadSheet } from "../lib/sheet";
   const esc = (v: string) =>
-    String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
   loadSheet().then((data) => {
     if (!data) return;
@@ -149,10 +162,10 @@ const socials = [
     if (el && "available" in s) {
       const on = String(s.available).toLowerCase() === "true";
       el.style.display = on ? "" : "none";
-      if (on && s.availableFor) el.textContent = `available for ${s.availableFor}`;
+      if (on && s.availableFor) el.textContent = `● available for ${s.availableFor}`;
     }
 
-    // song of the day (hero)
+    // song of the day (footer)
     const sTitle = document.getElementById("hero-sotd-title");
     const sLink = document.getElementById("hero-sotd") as HTMLAnchorElement | null;
     if (sTitle && s.songTitle) sTitle.textContent = s.songTitle;
@@ -165,24 +178,32 @@ const socials = [
       }
     }
 
-    // work list — sheet projects replace the static list
+    // work — sheet projects replace the static entries
     const projects = data.projects || [];
     const workList = document.getElementById("work-list");
     if (projects.length && workList) {
-      workList.innerHTML = projects
-        .map(
-          (p, i) =>
-            '<li class="border-b border-rule">' +
-            '<a href="/work/?p=' + encodeURIComponent(p.slug) + '" class="work-row group flex items-baseline gap-4 py-4">' +
-            '<span class="font-mono text-[11px] text-ink-faint tabular shrink-0">' + String(i + 1).padStart(2, "0") + "</span>" +
-            '<h3 class="work-title font-display font-medium tracking-[-0.01em] text-[19px] md:text-[23px] leading-[1.15] shrink-0">' + esc(p.title) + "</h3>" +
-            '<span class="hidden sm:block flex-1 text-right text-[13px] text-ink-faint truncate">' + esc(p.tagline) + "</span>" +
-            '<span class="arrow font-mono text-ink-dim group-hover:text-ink transition-colors shrink-0">↗</span>' +
-            "</a></li>",
-        )
-        .join("");
+      workList.innerHTML =
+        '<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">' +
+        projects
+          .map(
+            (p) =>
+              '<a href="/work/?p=' + encodeURIComponent(p.slug) + '" class="entry block h-full p-4 md:p-5">' +
+              (p.stamp ? '<span class="stamp">' + esc(p.stamp) + "</span>" : "") +
+              '<div class="flex justify-between gap-3 font-mono text-[11px] uppercase tracking-[0.1em] text-ink-faint">' +
+              "<span>" + esc(p.role) + "</span>" +
+              (p.period ? '<span class="tabular">' + esc(p.period) + "</span>" : "") +
+              "</div>" +
+              '<h3 class="font-display leading-[1.05] mt-2 text-[24px]">' + esc(p.title) + "</h3>" +
+              '<p class="mt-2 leading-[1.5] text-ink-soft text-[14px]">' + esc(p.tagline) + "</p>" +
+              (p.stack.length
+                ? '<p class="mt-3 font-mono text-[11px] text-ink-faint">' + esc(p.stack.slice(0, 4).join(" · ").toLowerCase()) + "</p>"
+                : "") +
+              "</a>",
+          )
+          .join("") +
+        "</div>";
       const count = document.getElementById("work-count");
-      if (count) count.textContent = String(projects.length).padStart(2, "0");
+      if (count) count.textContent = String(projects.length);
     }
   });
 </script>

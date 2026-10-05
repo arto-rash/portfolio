@@ -11,7 +11,7 @@ const multiple = images.length > 1;
 
 {images.length > 0 && (
   <div class={`slideshow group relative ${klass}`} data-slideshow>
-    <div class={`relative ${ratio} w-full overflow-hidden border border-rule bg-bg-2`}>
+    <div class={`relative ${ratio} w-full overflow-hidden bg-bg-2`}>
       {images.map((src, i) => (
         <img
           src={src}

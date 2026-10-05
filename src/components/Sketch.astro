@@ -1,0 +1,73 @@
+---
+// Hand-drawn system sketch for a logbook entry, keyed by slug.
+// Only flagships (and the rover) have one; anything else renders nothing.
+interface Props {
+  slug: string;
+  draw?: boolean;
+}
+const { slug, draw = false } = Astro.props;
+const cls = draw ? "sketch draw" : "sketch";
+---
+
+{slug === "escaflow" && (
+  <svg class={cls} viewBox="0 0 300 112" role="img" aria-label="Camera feeds go to a YOLO and OpenCV model, which sends alerts to a dispatcher">
+    <text class="m" x="120" y="16">falls, crowding</text>
+    <rect x="8" y="34" width="70" height="40" />
+    <text x="16" y="58">camera ×n</text>
+    <path d="M78 54 H112" /><path d="M106 49 L112 54 L106 59" />
+    <rect x="114" y="28" width="76" height="52" />
+    <text x="124" y="50">YOLO +</text>
+    <text x="124" y="64">OpenCV</text>
+    <path d="M190 54 H222" /><path d="M216 49 L222 54 L216 59" />
+    <rect x="224" y="34" width="68" height="40" />
+    <text x="232" y="58">dispatch</text>
+    <path class="m" d="M130 22 C 140 24, 150 26, 152 28" />
+    <path d="M258 74 V96 H40 V74" stroke-dasharray="3 4" />
+    <text x="96" y="108">human confirms every alert</text>
+  </svg>
+)}
+
+{slug === "fermachi" && (
+  <svg class={cls} viewBox="0 0 300 112" role="img" aria-label="Farmers and machinery owners meet on a marketplace, advised by FermachiAI">
+    <circle cx="40" cy="30" r="16" />
+    <text x="22" y="62">farmer</text>
+    <circle cx="40" cy="90" r="12" />
+    <text x="60" y="96">owner</text>
+    <path d="M58 32 L130 52 M54 86 L130 62" />
+    <rect x="132" y="36" width="84" height="40" />
+    <text x="140" y="54">marketplace</text>
+    <text x="140" y="68">+ auctions</text>
+    <path d="M216 56 H244" />
+    <circle class="m" cx="268" cy="56" r="20" />
+    <text class="m" x="256" y="61">AI</text>
+    <text class="m" x="200" y="20">agronomist!</text>
+  </svg>
+)}
+
+{slug === "jabish" && (
+  <svg class={cls} viewBox="0 0 300 112" role="img" aria-label="Teachers generate exams with AI; students search for tutors">
+    <rect x="8" y="14" width="70" height="30" />
+    <text x="18" y="33">teacher</text>
+    <path d="M78 29 H112" /><path d="M106 24 L112 29 L106 34" />
+    <circle class="m" cx="134" cy="29" r="18" />
+    <text class="m" x="123" y="34">AI</text>
+    <path d="M152 29 H186" /><path d="M180 24 L186 29 L180 34" />
+    <path d="M190 12 h70 v34 h-70 z M200 22 h40 M200 30 h50 M200 38 h30" />
+    <rect x="8" y="70" width="70" height="30" />
+    <text x="18" y="89">student</text>
+    <path d="M78 85 H186" stroke-dasharray="3 4" /><path d="M180 80 L186 85 L180 90" />
+    <circle cx="206" cy="80" r="8" /><path d="M192 102 C 196 90, 216 90, 220 102" />
+    <text x="230" y="90">tutor</text>
+  </svg>
+)}
+
+{slug === "rover" && (
+  <svg class={cls} viewBox="0 0 300 112" role="img" aria-label="Sketch of a rover">
+    <text class="m" x="176" y="18">first team from AZ</text>
+    <path d="M60 64 L110 44 H200 L232 64 Z" />
+    <circle cx="86" cy="82" r="18" /><circle cx="86" cy="82" r="4" />
+    <circle cx="206" cy="82" r="18" /><circle cx="206" cy="82" r="4" />
+    <path d="M150 44 V22 H170" />
+    <path d="M40 102 H260" stroke-dasharray="2 6" />
+  </svg>
+)}

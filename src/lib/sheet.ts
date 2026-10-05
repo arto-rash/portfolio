@@ -38,6 +38,9 @@ export interface SheetProject {
   image: string;
   accent: string;
   featured: boolean;
+  tier: "flagship" | "shipped" | "client";
+  period: string;
+  stamp: string;
 }
 
 export interface SheetData {
@@ -123,6 +126,9 @@ export function loadSheet(): Promise<SheetData | null> {
           image: String(p.image ?? ""),
           accent: String(p.accent ?? ""),
           featured: isTrue(p.featured),
+          tier: (["flagship", "shipped", "client"].includes(String(p.tier)) ? String(p.tier) : "shipped") as SheetProject["tier"],
+          period: String(p.period ?? ""),
+          stamp: String(p.stamp ?? ""),
         }));
       return { settings, posts, experience, projects };
     })

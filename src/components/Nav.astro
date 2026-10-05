@@ -1,30 +1,26 @@
 ---
-import profile from "../data/profile.json";
-
 interface Props {
   showHome?: boolean;
 }
 const { showHome = false } = Astro.props;
+const links = [
+  { label: "work", href: showHome ? "/#work" : "#work" },
+  { label: "notes", href: "/blog" },
+  { label: "about", href: "/about" },
+  { label: "contact", href: showHome ? "/#contact" : "#contact" },
+];
 ---
 
-<header
-  class="fixed inset-x-0 top-0 z-40 backdrop-blur-md bg-bg/80 border-b border-rule"
->
-  <div class="mx-auto max-w-4xl px-5 md:px-8 h-14 flex items-center justify-between">
-    <a href="/" class="font-mono text-[11px] tracking-[0.16em] uppercase text-ink">
-      {profile.shortName}.{profile.lastName}
+<header class="fixed inset-x-0 top-0 z-40 bg-bg/90 backdrop-blur-sm border-b-2 border-ink">
+  <div class="mx-auto max-w-5xl px-5 md:px-8 h-14 flex items-center justify-between gap-4 font-mono text-[11px] uppercase tracking-[0.12em]">
+    <a href="/" class="text-ink whitespace-nowrap">
+      logbook <span class="text-ink-faint">· a. rashid</span>
     </a>
-
-    <nav class="hidden sm:flex items-center gap-7 font-mono text-[11px] tracking-[0.12em] uppercase text-ink-faint">
-      <a href={showHome ? "/#work" : "#work"} class="hover:text-ink transition-colors">work</a>
-      <a href="/about" class="hover:text-ink transition-colors">about</a>
-      <a href="/blog" class="hover:text-ink transition-colors">writing</a>
-      <a href={showHome ? "/#contact" : "#contact"} class="hover:text-ink transition-colors">contact</a>
+    <nav class="flex items-center gap-4 sm:gap-6 text-ink-faint">
+      {links.map((l, i) => (
+        <a href={l.href} class:list={["hover:text-accent transition-colors", i === 3 && "hidden sm:inline"]}>{l.label}</a>
+      ))}
     </nav>
-
-    <nav class="sm:hidden flex items-center gap-5 font-mono text-[11px] tracking-[0.12em] uppercase text-ink-faint">
-      <a href="/about" class="hover:text-ink transition-colors">about</a>
-      <a href="/blog" class="hover:text-ink transition-colors">writing</a>
-    </nav>
+    <span class="hidden md:inline text-ink-faint tabular">40.4°N 49.9°E</span>
   </div>
 </header>

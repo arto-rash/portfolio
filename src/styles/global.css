@@ -2,27 +2,53 @@
 @import "lenis/dist/lenis.css";
 
 @theme {
-  --color-bg: #ffffff;
-  --color-bg-2: #fafafa;
-  --color-surface: #f4f4f4;
-  --color-surface-2: #ececec;
-  --color-ink: #101010;
-  --color-ink-soft: #4a4a4a;
-  --color-ink-faint: #8f8f8f;
-  --color-ink-dim: #c2c2c2;
-  --color-rule: #e8e8e8;
-  --color-rule-hi: #d6d6d6;
-  --color-accent: #e02d00;
-  --color-warn: #8f8f8f;
+  /* Logbook: graph paper, ink, pencil, one orange marker. */
+  --color-bg: #f4f6f2;
+  --color-bg-2: #eceee8;
+  --color-surface: #e8ebe4;
+  --color-surface-2: #dfe3da;
+  --color-ink: #1d2a44;
+  --color-ink-soft: #3c4862;
+  --color-ink-faint: #5d6a80;
+  --color-ink-dim: #a3adbd;
+  --color-rule: #c6d0dc;
+  --color-rule-hi: #9fadc0;
+  --color-accent: #d9481c;
+  --color-warn: #5d6a80;
+  --color-grid: #dbe4ec;
+  --color-hl: #ffe36b;
 
-  --font-display: "Schibsted Grotesk", "Inter", system-ui, sans-serif;
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Architects Daughter", "Comic Neue", "Segoe Print", cursive;
+  --font-sans: "Courier Prime", "Courier New", ui-monospace, monospace;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* Blueprint at night: same tokens, redefined. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0f2138;
+    --color-bg-2: #132842;
+    --color-surface: #16304f;
+    --color-surface-2: #1c3a5e;
+    --color-ink: #e8eef7;
+    --color-ink-soft: #c3cfe0;
+    --color-ink-faint: #93a6c2;
+    --color-ink-dim: #4d6587;
+    --color-rule: #2b4a70;
+    --color-rule-hi: #3f638f;
+    --color-accent: #ff7a4d;
+    --color-warn: #93a6c2;
+    --color-grid: #183150;
+    --color-hl: #ff7a4d55;
+  }
 }
 
 @layer base {
   :root {
     color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { color-scheme: dark; }
   }
 
   *,
@@ -39,6 +65,12 @@
 
   body {
     font-family: var(--font-sans);
+    font-size: 16px;
+    background-image:
+      linear-gradient(var(--color-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+    background-size: 22px 22px;
+    background-position: -1px -1px;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overflow-x: clip;
@@ -82,7 +114,7 @@
 }
 
 /* ---------- Type utilities ---------- */
-.font-display { font-family: var(--font-display); letter-spacing: -0.02em; }
+.font-display { font-family: var(--font-display); letter-spacing: 0 !important; font-weight: 400 !important; }
 .font-mono    { font-family: var(--font-mono); }
 .font-sans    { font-family: var(--font-sans); }
 
@@ -169,7 +201,7 @@
 .tag {
   display: inline-block;
   padding: 0.3rem 0.6rem;
-  border: 1px solid var(--color-rule-hi);
+  border: 1px dashed var(--color-rule-hi);
   border-radius: 0;
   font-family: var(--font-mono);
   font-size: 11px;
@@ -195,8 +227,7 @@
 .prose > * + * { margin-top: 1.25rem; }
 .prose h1, .prose h2, .prose h3 {
   font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-weight: 400;
   line-height: 1.15;
   margin-top: 2.5rem;
 }
@@ -235,13 +266,13 @@
   border-radius: 0;
 }
 .prose pre {
-  background: #101010 !important;
+  background: var(--color-ink) !important;
   border: 1px solid var(--color-ink);
   border-radius: 0;
   padding: 1rem 1.15rem;
   font-size: 13.5px;
   overflow-x: auto;
-  color: #f2f2f2;
+  color: var(--color-bg);
 }
 .prose hr { margin: 2.5rem 0; }
 .prose img {
@@ -250,6 +281,75 @@
   width: 100%;
   height: auto;
 }
+
+/* ---------- Logbook pieces ---------- */
+.hand { font-family: var(--font-display); }
+
+/* highlighter swipe behind a phrase */
+mark, .hl {
+  background: linear-gradient(transparent 55%, var(--color-hl) 55%, var(--color-hl) 90%, transparent 90%);
+  color: inherit;
+  padding: 0 0.15em;
+}
+
+/* margin note in marker */
+.scrawl {
+  font-family: var(--font-display);
+  color: var(--color-accent);
+  display: inline-block;
+  transform: rotate(-2deg);
+}
+
+/* a page in the logbook: ink outline + offset shadow */
+.entry {
+  position: relative;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-ink);
+  box-shadow: 4px 4px 0 var(--color-ink);
+  transition: transform 200ms ease, box-shadow 200ms ease, opacity 550ms ease;
+}
+a.entry:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--color-ink); }
+a.entry:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--color-ink); }
+
+/* rubber stamp in the corner of an entry */
+.stamp {
+  position: absolute;
+  top: -12px;
+  right: 14px;
+  background: var(--color-accent);
+  color: var(--color-bg);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  transform: rotate(3deg);
+  white-space: nowrap;
+}
+
+.stamp.stamp-inline { position: static; display: inline-block; }
+
+/* hand-drawn system sketches */
+.sketch { display: block; width: 100%; height: auto; overflow: visible; }
+.sketch * { fill: none; stroke: var(--color-ink); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.sketch .m { stroke: var(--color-accent); }
+.sketch text { fill: var(--color-ink); stroke: none; font-family: var(--font-sans); font-size: 10px; }
+.sketch text.m { fill: var(--color-accent); stroke: none; font-family: var(--font-display); font-size: 13px; }
+@media (prefers-reduced-motion: no-preference) {
+  .sketch.draw path, .sketch.draw rect, .sketch.draw circle {
+    stroke-dasharray: 600;
+    stroke-dashoffset: 0;
+    animation: draw 1.4s ease-out both;
+  }
+  @keyframes draw { from { stroke-dashoffset: 600; } }
+}
+
+/* a lone last card in the 3-col grid takes the full row */
+@media (min-width: 1024px) { .shipped > :last-child:nth-child(3n+1) { grid-column: 1 / -1; } }
+
+/* check-mark list for the proof strip */
+.ticks { display: flex; flex-wrap: wrap; gap: 0.5rem 1.6rem; }
+.ticks li::before { content: "✓ "; color: var(--color-accent); }
 
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
