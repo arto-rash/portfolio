@@ -21,6 +21,31 @@ const links = [
         <a href={l.href} class:list={["hover:text-accent transition-colors", i === 3 && "hidden sm:inline"]}>{l.label}</a>
       ))}
     </nav>
-    <span class="hidden md:inline text-ink-faint tabular">40.4°N 49.9°E</span>
+    <button type="button" class="theme-switch" role="switch" aria-checked="false" aria-label="Blueprint mode" data-theme-switch>
+      <span class="lbl lbl-paper hidden md:inline">paper</span>
+      <span class="track" aria-hidden="true"><span class="knob"></span></span>
+      <span class="lbl lbl-blue hidden md:inline">blueprint</span>
+    </button>
   </div>
 </header>
+
+<script>
+  const root = document.documentElement;
+  const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+  document.querySelectorAll<HTMLButtonElement>("[data-theme-switch]").forEach((btn) => {
+    const sync = () => btn.setAttribute("aria-checked", String(root.dataset.theme === "dark"));
+    sync();
+    btn.addEventListener("click", () => {
+      const dark = root.dataset.theme !== "dark";
+      root.classList.add("theme-anim");
+      if (dark) root.dataset.theme = "dark";
+      else delete root.dataset.theme;
+      if (meta) meta.content = dark ? "#0f2138" : "#f4f6f2";
+      try {
+        localStorage.setItem("theme", dark ? "dark" : "light");
+      } catch (e) {}
+      sync();
+      setTimeout(() => root.classList.remove("theme-anim"), 350);
+    });
+  });
+</script>

@@ -28,8 +28,16 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://example.com
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="theme-color" content="#f4f6f2" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0f2138" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f4f6f2" />
+    <script is:inline>
+      // Paper (light) by default; blueprint only if the visitor flipped the switch.
+      try {
+        if (localStorage.getItem("theme") === "dark") {
+          document.documentElement.dataset.theme = "dark";
+          document.querySelector('meta[name="theme-color"]').content = "#0f2138";
+        }
+      } catch (e) {}
+    </script>
 
     <title>{title}</title>
     <meta name="description" content={description} />
