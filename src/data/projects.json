@@ -99,41 +99,6 @@
     "featured": true
   },
   {
-    "slug": "portfelim",
-    "title": "Portfelim",
-    "tagline": "Turn teaching material into AI exams in minutes.",
-    "role": "full-stack",
-    "status": "live",
-    "description": "A multilingual, credit-based platform that turns a teacher's photos, PDFs or slides into editable AI-generated exams, quizzes and answer keys – with AI grading and PDF/DOCX export.",
-    "longDescription": "Teachers upload material, pick question types, difficulty and language, and a multimodal LLM returns a strict-JSON exam plus answer key they edit in a rich TipTap/KaTeX editor before exporting to PDF or DOCX; the same AI grades open-ended answers and generates study materials. Built as a Laravel 13 API (Sanctum, PostgreSQL, queued jobs) with two Next.js 16 front-ends – the app and a separate marketing site.",
-    "stack": [
-      "Laravel",
-      "PostgreSQL",
-      "Next.js",
-      "React",
-      "TypeScript",
-      "OpenRouter"
-    ],
-    "url": "https://farida-ai-frontend.vercel.app/",
-    "links": [
-      {
-        "label": "App",
-        "url": "https://farida-ai-frontend.vercel.app/"
-      },
-      {
-        "label": "Landing",
-        "url": "https://farida-ai-landing.vercel.app/"
-      }
-    ],
-    "image": "",
-    "screenshots": [],
-    "accent": "#6741d9",
-    "tier": "shipped",
-    "period": "",
-    "stamp": "",
-    "featured": true
-  },
-  {
     "slug": "vevy-product-ai",
     "title": "Vevy Product AI",
     "tagline": "AI-powered Shopify app for product descriptions.",
@@ -347,11 +312,11 @@
       "Next.js",
       "Tailwind"
     ],
-    "url": "https://novarc-media.vercel.app/",
+    "url": "https://novarc.artoghrul.com/",
     "links": [
       {
         "label": "Live demo",
-        "url": "https://novarc-media.vercel.app/"
+        "url": "https://novarc.artoghrul.com/"
       }
     ],
     "image": "",
