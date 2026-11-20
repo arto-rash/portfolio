@@ -1,19 +1,27 @@
 [
   {
+    "title": "NASA Space Apps Challenge – Baku",
+    "when": "2026",
+    "year": 2026,
+    "category": "Hackathons",
+    "highlight": "1st place · Global Nominee",
+    "detail": "1st place in Baku and Global Nominee with team NASAZ for ODLAR; global Top 40 and Top 10 judging in progress. ODLAR has drawn interest from GFMC (Germany) and SOCAR."
+  },
+  {
     "title": "NASA Human Exploration Rover Challenge",
     "when": "2025",
     "year": 2025,
     "category": "Robotics & STEM",
     "highlight": "team captain",
-    "detail": "Team captain of one of 25 teams selected worldwide – the first and only team from Azerbaijan."
+    "detail": "Team captain of one of 25 teams selected worldwide – the only team from Azerbaijan that year."
   },
   {
     "title": "Baku Metro Hackathon",
-    "when": "2025",
-    "year": 2025,
+    "when": "2026",
+    "year": 2026,
     "category": "Hackathons",
     "highlight": "1st place",
-    "detail": "1st place with my team “KhatAI”."
+    "detail": "1st place with my team “KhatAI” for EscaFlow, an AI escalator-safety system now deployed in Baku Metro."
   },
   {
     "title": "Robotex Eurasia – quarter- & semi-finals",
@@ -68,8 +76,8 @@
     "when": "2023–2024",
     "year": 2024,
     "category": "Space",
-    "highlight": "presented at IAC 2024",
-    "detail": "Volunteered for WSW 2023 and IAC 2023 with the National Space Agency of Azerbaijan; presented with a team at IAC 2024."
+    "highlight": "volunteer & team project",
+    "detail": "Volunteered at World Space Week 2023 and IAC 2023 with Azercosmos, covering sessions and writing event reports; contributed to a team project presented at IAC 2024."
   },
   {
     "title": "Maine Jazz Festival",
@@ -94,5 +102,13 @@
     "category": "Leadership",
     "highlight": "founder",
     "detail": "Founded and ran the programming club at my high school in Maine, USA."
+  },
+  {
+    "title": "Interact Club, Fryeburg Academy",
+    "when": "2021–2022",
+    "year": 2022,
+    "category": "Leadership",
+    "highlight": "secretary",
+    "detail": "Secretary of the school's community-service club: regular snow clearing for an elderly resident, food stands at the Fryeburg Fair, and a local church's food distribution."
   }
 ]

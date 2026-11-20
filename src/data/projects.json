@@ -3,14 +3,19 @@
     "role": "full-stack",
     "status": "internal",
     "url": "",
-    "links": [],
+    "links": [
+      {
+        "label": "GitHub (hackathon prototype)",
+        "url": "https://github.com/arto-rash/metro-hackathon-ai-escalator"
+      }
+    ],
     "image": "none",
     "screenshots": [],
     "slug": "escaflow",
     "title": "EscaFlow",
     "tagline": "AI escalator safety, deployed in Baku Metro.",
     "description": "An AI escalator-safety platform that detects crowd density, unsafe movement and falls from live camera feeds, with analyst and dispatcher dashboards for human-in-the-loop alerts.",
-    "longDescription": "EscaFlow watches live escalator camera feeds and flags risks in real time – crowd density, unsafe movement, falls – using YOLO and OpenCV models in Python. Alerts flow into analyst and dispatcher dashboards (Laravel API, Next.js front-end) where a human confirms and acts on them. I built the full system; it won 1st place at the Baku Metro Hackathon 2026 with team KhatAI and is now deployed in Baku Metro. It runs inside the metro network, so there is no public demo.",
+    "longDescription": "EscaFlow watches live escalator camera feeds and flags risks in real time – crowd density, unsafe movement, falls – using YOLO and OpenCV models in Python. Alerts flow into analyst and dispatcher dashboards (Laravel API, Next.js front-end) where a human confirms and acts on them. I built the full system; it won 1st place at the Baku Metro Hackathon 2026 with team KhatAI and is now deployed in Baku Metro. The production system runs inside the metro network, so there is no public demo; the hackathon prototype is open source.",
     "stack": [
       "Python",
       "YOLO",
@@ -26,32 +31,64 @@
     "featured": true
   },
   {
+    "slug": "odlar",
+    "title": "ODLAR",
+    "tagline": "One fire record for the Land of Fire.",
+    "role": "full-stack",
+    "status": "live",
+    "description": "Harmonizes NASA's MODIS and VIIRS satellite fire archives into one 25-year record, with district fire calendars and 7-day and 13-week fire-risk forecasts. 1st place, NASA Space Apps Challenge 2026 Baku.",
+    "longDescription": "ODLAR merges NASA's two active-fire archives – MODIS (1 km, since 2000) and VIIRS (375 m, since 2012), which aren't comparable as they stand – into one consistent 25-year record. On that record it builds a burning-activity calendar for every district and forecasts fire risk with LightGBM, for the next 7 days and as a 13-week outlook; harmonization lifts forecast skill over climatology (Brier skill score from −0.02 to +0.13). It covers 193 countries and is updated daily from NASA FIRMS, with Azerbaijan as the home pilot. Built with team NASAZ: a Python data pipeline, FastAPI analytics, a Laravel gateway with PostGIS and alerts, and a Next.js + MapLibre map app, with 300+ automated tests. It won 1st place at NASA Space Apps Challenge 2026 in Baku, is a Global Nominee, and has drawn interest from the Global Fire Monitoring Center (GFMC, Germany) and SOCAR.",
+    "stack": [
+      "Python",
+      "LightGBM",
+      "FastAPI",
+      "Laravel",
+      "PostGIS",
+      "Next.js",
+      "MapLibre"
+    ],
+    "url": "https://odlar.app/",
+    "links": [
+      {
+        "label": "Live",
+        "url": "https://odlar.app/"
+      },
+      {
+        "label": "GitHub",
+        "url": "https://github.com/arto-rash/nasa-odlar"
+      }
+    ],
+    "image": "",
+    "screenshots": [],
+    "accent": "#c92a2a",
+    "tier": "flagship",
+    "period": "2026",
+    "stamp": "1st · NASA Space Apps Baku",
+    "featured": true
+  },
+  {
     "slug": "fermachi",
     "title": "Fermachi",
     "tagline": "Azerbaijan's marketplace for farm machinery, services & produce.",
     "role": "full-stack",
     "status": "live",
-    "description": "A trilingual agricultural marketplace where anyone can rent out farm machinery, hire field services, and buy or sell produce from a single account.",
-    "longDescription": "Fermachi lets Azerbaijani farmers and providers list and book agricultural machinery, field services, and goods through one unified account – with a server-enforced booking flow, escrow-style payments and platform commission, bidirectional reviews, real-time chat and notifications, and an AI assistant. It's built as a four-part polyrepo: a Laravel 11 REST + WebSocket API on PostgreSQL, a Next.js 16 app dashboard, a Next.js marketing site, and an Expo / React Native mobile client shipping soon. It also runs live auctions, and ships FermachiAI – an AI agronomist that advises on planting, crop treatment and prices. I'm co-founder, CTO and sole developer.",
+    "description": "A trilingual agricultural marketplace where anyone can rent out farm machinery, hire field services, and buy or sell produce from a single account – 200 users within 5 months of launch.",
+    "longDescription": "Fermachi lets Azerbaijani farmers and providers list and book agricultural machinery, field services, and goods through one unified account – with a server-enforced booking flow, escrow-style payments and platform commission, bidirectional reviews, real-time chat and notifications, and an AI assistant. It's built as a three-part polyrepo: a Laravel 11 REST + WebSocket API on PostgreSQL, a Next.js 16 web app, and a Flutter mobile app for iOS and Android. It also runs live auctions, and ships FermachiAI – an AI agronomist that advises on planting, crop treatment and prices. It reached 200 users within five months of launch. I'm co-founder, CTO and sole developer.",
     "stack": [
       "Laravel",
       "PostgreSQL",
       "Next.js",
       "React",
       "TypeScript",
-      "Expo",
+      "Flutter",
       "Reverb",
       "LLM APIs"
     ],
     "url": "https://fermachi.com/",
     "links": [
       {
-        "label": "Landing",
-        "url": "https://fermachi.com/"
-      },
-      {
         "label": "App",
-        "url": "https://app.fermachi.com/"
+        "url": "https://fermachi.com/"
       }
     ],
     "image": "",
@@ -81,8 +118,8 @@
     "slug": "jabish",
     "title": "Jabish",
     "tagline": "AI-assisted teaching, and a way to find the right tutor.",
-    "description": "An EdTech platform where teachers create exams, homework and lessons with AI, and students find tutors by subject, level and city.",
-    "longDescription": "Jabish is an EdTech platform I co-founded and build as CTO and sole developer. Teachers generate exams, homework and lessons with LLMs and edit them before publishing; students search for tutors by subject, level and city. Built and deployed end to end – Laravel API on PostgreSQL, Next.js front-ends, shipped with Docker, Nginx and CI/CD.",
+    "description": "An EdTech platform where teachers create exams, homework and lessons with AI, and students find tutors by subject, level and city – nearly 80 users in its first three months.",
+    "longDescription": "Jabish is an EdTech platform I co-founded and build as CTO and sole developer. Teachers upload their material – photos or PDFs – and AI drafts editable exams, homework and lessons with answer keys, exported as PDF. Teachers also get public profiles, a lesson calendar and student rosters; students find tutors by subject, level and city; schools post jobs teachers can apply to. Built and deployed end to end – Laravel API on PostgreSQL, Next.js front-ends, shipped with Docker, Nginx and CI/CD – it reached nearly 80 users in under three months.",
     "stack": [
       "Laravel",
       "PostgreSQL",
@@ -113,11 +150,11 @@
       "MySQL",
       "LLM APIs"
     ],
-    "url": "https://apps.shopify.com/vevy-ai-product-description",
+    "url": "https://apps.shopify.com/vevy-product-blocks",
     "links": [
       {
         "label": "Shopify App Store",
-        "url": "https://apps.shopify.com/vevy-ai-product-description"
+        "url": "https://apps.shopify.com/vevy-product-blocks"
       }
     ],
     "image": "",
@@ -151,8 +188,8 @@
     "slug": "shopify-apps",
     "title": "Shopify Apps: QX, SLOT, RecurrinGO!",
     "tagline": "Discounts, bookings and subscriptions on the Shopify App Store.",
-    "description": "Contributions to three live Shopify App Store apps: QX (quantity discounts), SLOT (appointment booking) and RecurrinGO! (subscriptions).",
-    "longDescription": "Alongside building vevy, I contributed to three production Shopify apps that are live on the Shopify App Store: QX for quantity discounts, SLOT for appointment booking, and RecurrinGO! for subscriptions. Work spanned Laravel back-ends, Shopify Admin API integration and MySQL data models.",
+    "description": "Features and fixes for three live Shopify App Store apps: QX (quantity discounts), SLOT (appointment and rental booking) and RecurrinGO! (subscriptions).",
+    "longDescription": "Alongside building vevy, I developed features and fixes for three production Shopify apps that are live on the Shopify App Store: QX for quantity discounts, SLOT for appointment and rental booking, and RecurrinGO! for subscriptions. Work spanned Laravel back-ends, Shopify Admin API integration and MySQL data models.",
     "stack": [
       "Laravel",
       "PHP",
@@ -199,6 +236,34 @@
     "featured": true
   },
   {
+    "slug": "baji",
+    "title": "Baji",
+    "tagline": "A health guide for girls and women.",
+    "role": "full-stack",
+    "status": "live",
+    "description": "A trilingual health guide for girls and women, with consultants and a delivery shop, on a freemium model.",
+    "longDescription": "Baji is a university venture project, still in development: a health guide for girls and women with consultants and a delivered shop, in Azerbaijani, Russian and English. It runs on a freemium model (Free, Plus, Pro) whose plan rules are enforced in a Laravel API; the Next.js front-end proxies every API call server-side and keeps the auth token in an httpOnly cookie.",
+    "stack": [
+      "Laravel",
+      "Next.js",
+      "TypeScript"
+    ],
+    "url": "https://baji.az/",
+    "links": [
+      {
+        "label": "Live",
+        "url": "https://baji.az/"
+      }
+    ],
+    "image": "",
+    "screenshots": [],
+    "accent": "#d6336c",
+    "tier": "shipped",
+    "period": "2026",
+    "stamp": "university venture",
+    "featured": false
+  },
+  {
     "role": "full-stack",
     "status": "live",
     "url": "",
@@ -220,6 +285,29 @@
     "tier": "shipped",
     "period": "2025–",
     "stamp": "570+ daily users",
+    "featured": false
+  },
+  {
+    "slug": "risk-registry",
+    "title": "Risk Registry Systems",
+    "tagline": "Enterprise risk management for several organizations.",
+    "role": "full-stack",
+    "status": "internal",
+    "description": "Enterprise risk-registry systems built at Megasec for several organizations: risk scoring, treatment plans, incidents, audit trails and reporting.",
+    "longDescription": "At Megasec I build risk-registry (enterprise risk management) systems, each tailored to the organization using it: risk assessment and scoring, treatment plans, incident and task tracking, department-level role-based access, audit trails, two-factor authentication, evidence uploads and reporting dashboards. They run inside each organization's network, so there is no public demo.",
+    "stack": [
+      "Laravel",
+      "PHP",
+      "Vite"
+    ],
+    "url": "",
+    "links": [],
+    "image": "none",
+    "screenshots": [],
+    "accent": "#5f3dc4",
+    "tier": "shipped",
+    "period": "2026",
+    "stamp": "",
     "featured": false
   },
   {
@@ -247,30 +335,71 @@
   },
   {
     "slug": "cpm-invest",
-    "title": "CPM Invest Management System",
-    "tagline": "Backend & APIs for an investment firm's CRM.",
+    "title": "CPM Invest Brokerage Platform",
+    "tagline": "Backend for an investment brokerage platform.",
     "role": "backend",
     "status": "live",
-    "description": "Backend services and APIs for an investment company's CRM and internal management platform.",
-    "longDescription": "The backend behind an investment company's CRM and internal management platform – Node.js and Express over MongoDB. API design, data modelling, and the quiet reliability work that everything else depends on.",
+    "description": "Core backend of CPM Invest's investment brokerage platform: KYC, securities orders, balances, commissions and approval workflows.",
+    "longDescription": "I'm the core backend developer of CPM Invest's investment brokerage platform – Node.js and Express over MongoDB. It covers customer KYC and document signing, buy / sell / repo orders on securities, balances in AZN, USD and EUR, commissions and tariffs, and multi-level approval workflows – integrated with the central securities depository over ISO 20022, the 1C accounting system, SIMA national digital signatures, Firebase push notifications and Socket.IO real-time events.",
     "stack": [
       "Node.js",
       "Express",
-      "MongoDB"
+      "MongoDB",
+      "Socket.IO",
+      "Firebase",
+      "ISO 20022"
     ],
-    "url": "https://cpm.blink-bi.az/",
-    "links": [
-      {
-        "label": "Live",
-        "url": "https://cpm.blink-bi.az/"
-      }
-    ],
+    "url": "",
+    "links": [],
     "image": "none",
     "screenshots": [],
     "accent": "#ed7c2d",
     "tier": "shipped",
     "period": "",
     "stamp": "",
+    "featured": false
+  },
+  {
+    "slug": "ecotrail",
+    "title": "EcoTrail",
+    "tagline": "Explore Azerbaijan's hiking trails.",
+    "role": "full-stack",
+    "status": "live",
+    "description": "A trail explorer for Azerbaijan – trails and places on a map, local guides and their tours, and reviews – on web and mobile.",
+    "longDescription": "EcoTrail maps Azerbaijan's hiking trails and the places along them, organised by district and economic region. Local guides can apply, get approved and publish tours, and hikers leave reviews. It's a three-repo project: a Laravel 13 API with Sanctum on PostgreSQL, a Next.js 16 web app with MapLibre maps, and an Expo / React Native mobile app – all open source.",
+    "stack": [
+      "Laravel",
+      "PostgreSQL",
+      "Next.js",
+      "React Native",
+      "Expo",
+      "MapLibre"
+    ],
+    "url": "https://ecotrail.artoghrul.com/",
+    "links": [
+      {
+        "label": "Live",
+        "url": "https://ecotrail.artoghrul.com/"
+      },
+      {
+        "label": "Web (GitHub)",
+        "url": "https://github.com/arto-rash/ecotrail-frontend"
+      },
+      {
+        "label": "API (GitHub)",
+        "url": "https://github.com/arto-rash/ecotrail-backend"
+      },
+      {
+        "label": "Mobile (GitHub)",
+        "url": "https://github.com/arto-rash/ecotrail-mobile"
+      }
+    ],
+    "image": "",
+    "screenshots": [],
+    "accent": "#2b8a3e",
+    "tier": "shipped",
+    "period": "2026",
+    "stamp": "open source",
     "featured": false
   },
   {
@@ -285,11 +414,11 @@
       "Next.js",
       "Tailwind"
     ],
-    "url": "https://capital-construction-xi.vercel.app/",
+    "url": "https://capitalconstruction.az/",
     "links": [
       {
-        "label": "Live demo",
-        "url": "https://capital-construction-xi.vercel.app/"
+        "label": "Live",
+        "url": "https://capitalconstruction.az/"
       }
     ],
     "image": "",

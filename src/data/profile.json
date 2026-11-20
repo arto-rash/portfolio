@@ -8,8 +8,8 @@
   "available": true,
   "availableFor": "freelance & full-time",
   "photo": "/selfie.jpeg",
-  "tagline": "Building at Megasec, freelancing on CRMs and Shopify apps, studying CS at ADA. Ex-robotics mentor, occasional bassist. Baku.",
-  "intro": "Full-stack web developer in Baku. I build internal systems and landing pages at Megasec, freelance on CRMs and Shopify apps, and study Computer Science at ADA. Before the web, I spent two years teaching kids robotics and electronics – there's still an ESP32 and a soldering iron somewhere on the desk.",
+  "tagline": "Co-founder & CTO of Fermachi and Jabish, building at Megasec, studying CS at ADA. NASA Space Apps Baku winner, ex-robotics mentor, occasional bassist.",
+  "intro": "Full-stack engineer in Baku. I co-founded and solely build Fermachi and Jabish, build access-control and risk-management systems at Megasec, freelance on fintech back-ends and Shopify apps, and study Computer Science at ADA. My hackathon work tends to outlive the hackathon: EscaFlow is deployed in Baku Metro, and ODLAR won NASA Space Apps in Baku. Before the web, I taught 100+ kids robotics and electronics – there's still an ESP32 and a soldering iron somewhere on the desk.",
   "stack": [
     "TypeScript",
     "React",
@@ -18,6 +18,7 @@
     "Node.js",
     "Laravel",
     "Express",
+    "PostgreSQL",
     "MongoDB",
     "MySQL",
     "Python",
@@ -28,11 +29,11 @@
     {
       "company": "Megasec LLC",
       "location": "Baku, Azerbaijan",
-      "role": "Full-stack Web Developer",
+      "role": "Junior Software Engineer (Part-time)",
       "start": "2025-06",
       "end": "",
       "current": true,
-      "description": "Building internal management systems and backend services in Laravel/PHP – workflow automation and database-driven features – plus responsive landing pages in Next.js, with a focus on performance and UX."
+      "description": "Maintain a Hikvision facial-recognition access-control system (Next.js + Laravel) used by 570+ people daily across two deployments, build enterprise risk-registry systems for several organizations, and build corporate sites in Next.js."
     },
     {
       "company": "Freelance",
@@ -41,7 +42,7 @@
       "start": "2023-12",
       "end": "",
       "current": true,
-      "description": "Web apps, CRM systems, and automation platforms in Node.js, Laravel, and Google Apps Script. Shopify integrations and frontends in Next.js, React, and Astro."
+      "description": "Core backend developer of CPM Invest's brokerage platform (Node.js, MongoDB, ISO 20022). CRM and automation systems in Node.js, Laravel and Google Apps Script; Shopify apps; frontends in Next.js, React and Astro."
     },
     {
       "company": "Enteskedu",
@@ -50,7 +51,7 @@
       "start": "2023-06",
       "end": "2024-10",
       "current": false,
-      "description": "Taught kids aged 3–16 through project-based learning with VEX, LEGO SPIKE Prime, Arduino, and ESP32. Coached robotics competition teams, prepared students for international competitions, and trained staff."
+      "description": "Taught 100+ kids aged 3–16 through project-based learning with VEX, LEGO SPIKE Prime, Arduino and ESP32, and had the largest student roster at the center within five months. Mentored fellow instructors, prepared students for international competitions, and built the center's LMS, still in use today."
     }
   ],
   "education": [
@@ -74,7 +75,11 @@
   "skillGroups": [
     {
       "label": "Full-stack web",
-      "items": ["HTML/CSS", "JavaScript / TypeScript", "React", "Next.js", "Astro", "Node.js", "Express", "Laravel / PHP", "MongoDB", "MySQL"]
+      "items": ["HTML/CSS", "JavaScript / TypeScript", "React", "Next.js", "Astro", "Node.js", "Express", "Laravel / PHP", "PostgreSQL", "MongoDB", "MySQL", "Docker", "Flutter", "React Native"]
+    },
+    {
+      "label": "Data & AI",
+      "items": ["Python", "FastAPI", "LightGBM", "YOLO / OpenCV", "PostGIS", "LLM APIs"]
     },
     {
       "label": "Systems & hardware",

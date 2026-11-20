@@ -61,9 +61,26 @@ const cls = draw ? "sketch draw" : "sketch";
   </svg>
 )}
 
+{slug === "odlar" && (
+  <svg class={cls} viewBox="0 0 300 112" role="img" aria-label="MODIS and VIIRS fire archives are harmonized into one 25-year record that drives fire-risk forecasts">
+    <text class="m" x="196" y="18">193 countries</text>
+    <rect x="8" y="12" width="62" height="28" />
+    <text x="18" y="31">MODIS</text>
+    <rect x="8" y="72" width="62" height="28" />
+    <text x="19" y="91">VIIRS</text>
+    <path d="M70 26 L104 50 M70 86 L104 62" />
+    <rect x="106" y="38" width="80" height="36" />
+    <text x="114" y="60">harmonize</text>
+    <text x="100" y="94">one 25-year record</text>
+    <path d="M186 56 H214" /><path d="M208 51 L214 56 L208 61" />
+    <path class="m" d="M240 80 C 224 72, 226 54, 236 40 C 237 50, 245 52, 245 44 C 256 56, 256 74, 240 80 Z" />
+    <text x="212" y="102">risk forecast</text>
+  </svg>
+)}
+
 {slug === "rover" && (
   <svg class={cls} viewBox="0 0 300 112" role="img" aria-label="Side view of a six-wheeled moon rover with a camera eye on a mast and a front arm, heading toward a crater">
-    <text class="m" x="8" y="38">first team</text>
+    <text class="m" x="8" y="38">only team</text>
     <text class="m" x="8" y="52">from AZ</text>
     <path class="m" d="M58 30 C 66 22, 72 20, 80 21" />
     <path class="m" d="M75 17 L80 21 L75 25" />
